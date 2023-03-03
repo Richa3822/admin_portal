@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/pages/Sidebar";
-import Dashboard from "./ui/organisem/Dashboard";
-import AddProduct from "./ui/organisem/AddProduct";
-import ViewProduct from "./ui/organisem/ViewProduct";
-import ViewOrders from "./ui/organisem/ViewOrders";
+import Dashboard from './components/pages/Dashboard';
+import AddProduct from "./components/pages/AddProduct";
+import ViewProduct from "./components/pages/ViewProduct"
+import ViewOrders from './components/pages/ViewOrders'
 
 
 function App() {
@@ -20,5 +20,7 @@ function App() {
     </Router>
   );
 }
+
+
 
 export default App;

@@ -1,18 +1,20 @@
+
 *{
     margin: 0;
     padding: 0;
 }
-
+/* Sidebar -----------------css */
 .sidebar-left{
     height: 100vh;
     width: 250px;
 }
 .main-right{
     height: 100vh;
-    width: 100%
+    width: 100%;
 }
 
+/* error-msg ------------------- */
 
-
-
-
+.error-msg{
+    color: red;
+}

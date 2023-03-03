@@ -1,4 +1,4 @@
-import AddProductForm from '../molecules/AddProductForm'
+import AddProductForm from '../organisms/AddProductForm'
 
 const AddProduct = () => {
     return (
@@ -12,7 +12,7 @@ const AddProduct = () => {
 
                     <div id="collapseOne" className="collapse show" data-parent="#accordion1">
                         <div className="card-body">
-                            <AddProductForm />         
+                            <AddProductForm />     
                         </div>
                     </div>
                 </div>

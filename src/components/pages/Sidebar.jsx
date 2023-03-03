@@ -1,8 +1,7 @@
 
 import { Link, Outlet } from 'react-router-dom';
-import List from '../../ui/atoms/List';
-import './Sidebar.css'
-import Topbar from '../../ui/molecules/Topbar';
+import List from '../atoms/List';
+import Topbar from '../molecules/Topbar';
 
 const Sidebar = () => {
     return (

@@ -1,10 +1,12 @@
-import React from 'react'
+import React from "react";
 import { Formik, Form, FieldArray, Field } from 'formik'
 import { Button } from 'reactstrap'
 import *as Yup from 'yup'
 import InputBox from '../molecules/InputBox'
 import InputSelector from '../molecules/InputSelector'
 import CustomErrorMsg from '../atoms/CustomErrorMsg'
+import ImageUpload from './UploadImgs'
+
 
 
 const validationSchema = Yup.object({
@@ -12,9 +14,9 @@ const validationSchema = Yup.object({
     brand: Yup.string().required('Required'),
     productDetails: Yup.string().required('Required'),
     category: Yup.string().required('Required'),
-    images: Yup.string().required('Required'),
+    image: Yup.string().required('Required'),
     variants: Yup.array().of(Yup.object({
-        images: Yup.string().required('Required'),
+        images: Yup.array().required('Minimum one image is required'),
         price: Yup.number().required('Required'),
         size: Yup.string().required('Required'),
         color: Yup.string().required('Required'),
@@ -38,16 +40,17 @@ const AddProductForm = () => {
                     brand: "",
                     productDetails: "",
                     category: "",
-                    images: "",
-                    variants: [{ images: "", price: "", size: "", color: '', noOfProducts: "", }],
+                    image: [],
+                    variants: [{ images: [], price: "", size: "", color: '', noOfProducts: "", }],
 
                 }}
             onSubmit={(values) => {
-                console.log(values + "Helooo")
+               // console.log(values);
             }}
             validationSchema={validationSchema}
         >
             {({ values, setFieldValue }) => {
+                // console.log(values)
                 return (
                     <Form >
                         <div className='row'>
@@ -101,14 +104,7 @@ const AddProductForm = () => {
                             </div>
 
                         </div>
-
-                        <InputBox htmlFor="images"
-                            type="file"
-                            name="images"
-                        />
-                        <CustomErrorMsg name='images' />
-
-
+                        <Field name='image' component={ImageUpload} accept=".jpg,.png"/>
                         <FieldArray
                             name="variants"
                             render={arrayHelpers => (
@@ -134,10 +130,10 @@ const AddProductForm = () => {
                                                 </div>
 
                                                 <div className='container-fluid mt-3'>
-                                                    <InputBox htmlFor="images"
-                                                        type="file"
-                                                        name={`variants.${index}.images`}
-                                                    />
+                                                    {/* <div className='d-flex '> */}
+                                                    <Field name={`variants.${index}.images`} maxFiles={3} accept=".jpg,.png" component={ImageUpload}  multiple/> 
+                                                        {/* </div> */}
+                                                   
                                                     <CustomErrorMsg name={`variants.${index}.images`} />
 
                                                     <div className='row'>

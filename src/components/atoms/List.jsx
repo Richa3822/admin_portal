@@ -5,7 +5,7 @@ const List = ({ name, children }) => {
         <div>
             <ul className="nav flex-column">
                 <li className="nav-item " style={{ listStyle: 'none' }} >
-                    <a className="nav-link active text-dark" href="#">
+                    <a className="nav-link active text-light" href="#">
                         {children}
                         {name}
                     </a>

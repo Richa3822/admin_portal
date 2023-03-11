@@ -17,7 +17,7 @@ const Topbar = () => {
 
   return (
     <div>
-      <Navbar color="light" light expand="md" style={{borderBottom: '1px solid rgba(0,0,0,0.1)'}}>
+      <Navbar  className='navbar-dark bg-dark' light expand="md" style={{borderBottom: '1px solid rgba(0,0,0,0.1)'}}>
         <NavbarBrand href="/" >Better Buy</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>

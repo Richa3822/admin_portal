@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from 'react'
 import { Formik, Form, FieldArray, Field } from 'formik'
 import { Button } from 'reactstrap'
 import *as Yup from 'yup'
@@ -6,13 +6,13 @@ import InputBox from '../molecules/InputBox'
 import InputSelector from '../molecules/InputSelector'
 import CustomErrorMsg from '../atoms/CustomErrorMsg'
 import ImageUpload from './UploadImgs'
-
-
+import ProductDetails from './ProductDetails'
+import { getData, saveData } from '../../services/Api'
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Required'),
     brand: Yup.string().required('Required'),
-    productDetails: Yup.string().required('Required'),
+    productDetails: Yup.object({}).required('Required'),
     category: Yup.string().required('Required'),
     image: Yup.string().required('Required'),
     variants: Yup.array().of(Yup.object({
@@ -21,38 +21,95 @@ const validationSchema = Yup.object({
         size: Yup.string().required('Required'),
         color: Yup.string().required('Required'),
         noOfProducts: Yup.number().required('Required'),
-
     }))
 })
 
 const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberr' },
-    { value: 'vanilla', label: 'Vanilla' }
+    { value: 'men', label: 'Men' },
+    { value: 'women', label: 'Women' },
+    { value: 'kids', label: 'kids' }
 ]
 
+
+
+const sizeOptions = [
+    { value: 's', label: 'S' },
+    { value: 'm', label: 'M' },
+    { value: 'l', label: 'L' },
+    { value: 'xl', label: 'XL' },
+    { value: 'xs', label: 'XS' },
+    { value: '2xs', label: '2XS' },
+    { value: '3xs', label: '3XS' },
+    { value: '4xl', label: '4xL' },
+    { value: 'free size', label: 'Free Size' }
+]
+
+
 const AddProductForm = () => {
+    const [selectedCategory, setSelectedCategory] = useState('')
+    const [selectedSubCategory, setSelectedSubCategory] = useState('')
+    const [subCategory, setSubCategory] = useState([])
+    const [bySubCategory, setBySubCategory] = useState([])
+
+    useEffect(() => {
+        getData(`category/${selectedCategory}`).then(result => {
+            let data = result.subCategoryNames
+            const newSubCategory = data.map((e, i) => ({
+                value: e.name,
+                label: e.name,
+            }))
+            setSubCategory(newSubCategory)
+
+        }).catch(err => {
+            console.log(err)
+        })
+    }, [selectedCategory])
+
+
+    useEffect(() => {
+        getData(`category/${selectedSubCategory}`).then(result => {
+            let data = result.subCategoryNames
+            const newCategory = data.map((e, i) => ({
+                value: e.name,
+                label: e.name,
+                category: e.category
+            }))
+            setBySubCategory(newCategory)
+        }).catch(err => {
+            console.log(err)
+        })
+
+    }, [selectedSubCategory])
+
+
+    const handleSubmit = async (e, data) => {
+        e.preventDefault()
+        console.log(data)
+        await saveData('product', data).then(response => {
+            console.log(response)
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
+
     return (
         <Formik
             initialValues={
                 {
                     name: "",
                     brand: "",
-                    productDetails: "",
+                    productDetails: {},
                     category: "",
                     image: [],
                     variants: [{ images: [], price: "", size: "", color: '', noOfProducts: "", }],
 
                 }}
-            onSubmit={(values) => {
-               // console.log(values);
-            }}
             validationSchema={validationSchema}
         >
             {({ values, setFieldValue }) => {
-                // console.log(values)
                 return (
-                    <Form >
+                    <Form onSubmit={(e) => handleSubmit(e, values)}>
                         <div className='row'>
                             <div className='col'>
                                 <InputBox htmlFor="name"
@@ -62,10 +119,7 @@ const AddProductForm = () => {
                                     placeholder="Enter Product name"
                                     inputClass="form-control"
                                 />
-                                <CustomErrorMsg name='name' />
                             </div>
-
-
                             <div className='col'>
                                 <InputBox htmlFor="brand"
                                     label="Brand"
@@ -74,43 +128,62 @@ const AddProductForm = () => {
                                     placeholder="Enter Product name"
                                     inputClass="form-control"
                                 />
-                                <CustomErrorMsg name='brand' />
-
                             </div>
                         </div>
 
+                        <Field name="productDetails" component={ProductDetails} />
 
-                        <div className='row'>
-                            <div className='col'>
-                                <InputBox htmlFor="productDetails"
-                                    label="Product Details"
-                                    type="text"
-                                    name="productDetails"
-                                    placeholder="Enter product Details"
-                                    inputClass="form-control"
-                                />
-                                <CustomErrorMsg name='productDetails' />
-
-                            </div>
-                            <div className='col'>
+                        <div className='row mt-4'>
+                            <div className='col '>
                                 <InputSelector
                                     options={options}
-                                    onChange={option => setFieldValue("category", option.value)}
+                                    onChange={
+                                        (option) => {
+                                            setSelectedCategory(option.value)
+                                        }}
                                     label="Category"
                                     htmlFor="Category"
                                     value={values.category}
+                                    name="category"
                                 />
-                                <CustomErrorMsg name='category' />
+                                <CustomErrorMsg name="category" />
+                            </div>
+
+                            <div className='col'>
+                                <InputSelector
+                                    htmlFor="subCategory"
+                                    label="Sub Category"
+                                    options={subCategory}
+                                    onChange={
+                                        (option) => {
+                                            setSelectedSubCategory(option.value)
+                                    }}
+                                />
+                            </div>
+
+                            <div className='col'>
+
+                                <InputSelector
+                                    htmlFor="subCategory"
+                                    label="Sub Category"
+                                    options={bySubCategory}
+                                    onChange={
+                                        (option) => {
+                                            setFieldValue("category", option.category)
+                                        }}
+                                />
                             </div>
 
                         </div>
-                        <Field name='image' component={ImageUpload} accept=".jpg,.png"/>
+                        <div className='mt-5'>
+                        <Field name='image' component={ImageUpload} accept=".jpg,.png" />
+                        </div>
                         <FieldArray
                             name="variants"
                             render={arrayHelpers => (
                                 <div className={values.variants && values.variants.length > 0 ? 'card mt-5' : ''}>
                                     {values.variants && values.variants.length > 0 ? (
-                                        values.variants.map((friend, index) => (
+                                        values.variants.map((variants, index) => (
 
                                             <div key={`${index}-varients`} >
 
@@ -130,10 +203,7 @@ const AddProductForm = () => {
                                                 </div>
 
                                                 <div className='container-fluid mt-3'>
-                                                    {/* <div className='d-flex '> */}
-                                                    <Field name={`variants.${index}.images`} maxFiles={3} accept=".jpg,.png" component={ImageUpload}  multiple/> 
-                                                        {/* </div> */}
-                                                   
+                                                    <Field name={`variants.${index}.images`} maxFiles={3} accept=".jpg,.png" component={ImageUpload} multiple />
                                                     <CustomErrorMsg name={`variants.${index}.images`} />
 
                                                     <div className='row'>
@@ -145,7 +215,6 @@ const AddProductForm = () => {
                                                                 placeholder="Enter Price"
                                                                 inputClass="form-control"
                                                             />
-                                                            <CustomErrorMsg name={`variants.${index}.price`} />
                                                         </div>
                                                         <div className='col'>
                                                             <InputBox htmlFor="noOfProducts"
@@ -155,20 +224,19 @@ const AddProductForm = () => {
                                                                 placeholder="Enter Price"
                                                                 inputClass="form-control"
                                                             />
-                                                            <CustomErrorMsg name={`variants.${index}.noOfProducts`} />
                                                         </div>
                                                     </div>
 
                                                     <div className='row'>
                                                         <div className='col'>
-                                                            <InputBox htmlFor="size"
+                                                            <InputSelector
+                                                                options={sizeOptions}
+                                                                onChange={option => setFieldValue(`variants.${index}.size`, option.value)}
                                                                 label="Size"
-                                                                type="number"
+                                                                htmlFor="Size"
                                                                 name={`variants.${index}.size`}
-                                                                placeholder="Enter size"
-                                                                inputClass="form-control"
                                                             />
-                                                            <CustomErrorMsg name={`variants.${index}.size`} />
+                                                            <CustomErrorMsg name="size" />
                                                         </div>
                                                         <div className='col'>
                                                             <InputBox htmlFor="color"
@@ -178,8 +246,8 @@ const AddProductForm = () => {
                                                                 placeholder="Enter color"
                                                                 inputClass="form-control"
                                                             />
-                                                            <CustomErrorMsg name={`variants.${index}.color`} />
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,23 +257,21 @@ const AddProductForm = () => {
                                         <Button
                                             type="button"
                                             color='primary'
-                                            onClick={() => arrayHelpers.push({ images: "", price: "", noOfProducts: "", size: "", color: "" })} // insert an empty string at a position
+                                            onClick={() => arrayHelpers.push({ images: [], price: "", noOfProducts: "", size: "", color: "" })} // insert an empty string at a position
                                         >
                                             Add variants +
                                         </Button>
-                                        <div>
-                                            <Button color='primary' type="submit">Submit</Button>
-                                        </div>
                                     </div>
                                 </div>
                             )}
                         />
+                        <div className='mt-4 mb-3 float-right'>
+                            <Button color='primary' type="submit">Submit</Button>
+                        </div>
                     </Form>
                 )
             }}
         </Formik>
-
-
     )
 }
 

@@ -1,5 +1,6 @@
 import InputLabel from "../atoms/InputLabel"
 import InputField from "../atoms/InputField"
+import CustomErrorMsg from "../atoms/CustomErrorMsg"
 const InputBox = (props) => {
 const { label,forHtml, type, placeholder, id, name, inputClass } = props
     return (
@@ -11,6 +12,7 @@ const { label,forHtml, type, placeholder, id, name, inputClass } = props
                 name={name}
                 inputClass={inputClass}
             />
+            <CustomErrorMsg name={name} />
         </div>
     )
 }

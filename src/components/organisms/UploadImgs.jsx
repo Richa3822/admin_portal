@@ -1,6 +1,7 @@
 import React, { useState,useCallback,useEffect } from "react";
 import { useDropzone } from 'react-dropzone';
 import { FaCloudDownloadAlt,FaTrashAlt } from 'react-icons/fa';
+import {saveData} from '../../services/Api'
 
 UploadImgs.defaultProps = {
   multiple: false,
@@ -24,6 +25,7 @@ function UploadImgs({ field, form, ...props }) {
 
   const setValue = (value) => {
     setFieldValue(field.name, value)
+    console.log(value + "dmsjdjsdhs")
   }
   const handleFileChange = async (files) => {
     if (maxFiles && files.length > maxFiles) {
@@ -34,17 +36,15 @@ function UploadImgs({ field, form, ...props }) {
     for (let i = 0; i < files.length; i++) {
       formData.append('images', files[i]);
     }
+     
+      await saveData('imageUpload', formData)
+      .then(response => {
+        const urlArr = response.urls;
+        setValue(urlArr) 
 
-    try {
-      const uplodImg = await fetch('http://localhost:8000/api/imageUpload', {
-        method: 'POST',
-        body: formData
-      }).then(res => res.json());
-      const urlArr= uplodImg.urls;
-      setValue(urlArr)    
-    } catch (error) {
-      console.log(error);
-    }
+      }).catch(err => {
+        console.log(err)
+      })
   }
 
   const {getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({

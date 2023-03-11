@@ -4,7 +4,16 @@ import Dashboard from './components/pages/Dashboard';
 import AddProduct from "./components/pages/AddProduct";
 import ViewProduct from "./components/pages/ViewProduct"
 import ViewOrders from './components/pages/ViewOrders'
+import axios from "axios";
 
+
+
+export const axiosObject = axios.create({
+  baseURL: 'http://localhost:4000/api/',
+  headers: {
+    "Access-Control-Allow-Origin": "*"
+  }
+})
 
 function App() {
   return (

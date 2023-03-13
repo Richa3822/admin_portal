@@ -7,6 +7,10 @@ import ViewOrders from './components/pages/ViewOrders'
 import Login from "./components/pages/Login";
 import axios from "axios";
 import PrivateRoutes from "./components/authentication/Authentication";
+import ViewUsers from "./components/pages/ViewUsers";
+import ViewSellers from "./components/pages/ViewSellers";
+import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
+import UserSellerDetails from "./components/organisms/UserSellerDetails";
 
 
 
@@ -21,20 +25,23 @@ function App() {
   return (
     <Router>
       <Routes>
-      <Route path="/login" element={<Login/>} />
+        <Route path="/login" element={<Login />} />
 
-      <Route element={<PrivateRoutes/>}>
+        <Route element={<PrivateRoutes />}>
 
-        <Route path="/" element={<Sidebar/>} >
-          <Route path="/dashboard" element={<Dashboard/>} />
-          <Route path="/add-product" element={<AddProduct/>} />
-          
-          <Route element={<PrivateRoutes roleRequired = "user"/>}>
-          <Route path="/view-products" element={<ViewProduct />}/>
+          <Route path="/" element={<Sidebar />} >
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/add-product" element={<AddProduct />} />
+
+            <Route element={<PrivateRoutes roleRequired="user" />}>
+              <Route path="/view-products" element={<ViewProduct />} />
+            </Route>
+
+            <Route path="/view-orders" element={<ViewOrders />} />
+            <Route path="/view-users" element={<ViewUsers />} />
+            <Route path="/view-sellers" element={<ViewSellers />} />
+            <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
           </Route>
-
-          <Route path="/view-orders" element={<ViewOrders />} />
-        </Route>
 
         </Route>
       </Routes>

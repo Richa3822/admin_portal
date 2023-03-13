@@ -12,6 +12,7 @@ const Sidebar = () => {
             <div className='d-flex justify-content-between align-items-center'>
                 <div className="bg-dark sidebar-left" id="sidebar-left"  >
                     <Link to='/'><List name='Dashboard' /></Link>
+                    <Link to='/add-user-seller'><List name='Add Sellers/User' /></Link>
                     <Link to='/add-product'><List name='Add Products' /></Link>
                     {
                         user.role === "admin" ?
@@ -20,6 +21,8 @@ const Sidebar = () => {
                             null
                     }
                     <Link to='/view-orders'><List name='View Orders' /></Link>
+                    <Link to='/view-users'><List name='View Users' /></Link>
+                    <Link to='/view-sellers'><List name='View Sellers' /></Link>
                 </div>
                 <div className='container-fluid pt-3 main-right'>
                     <Outlet />

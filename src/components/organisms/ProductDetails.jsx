@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'reactstrap';
 import InputLabel from '../atoms/InputLabel';
-import *as Yup from 'yup'
 import CustomErrorMsg from '../atoms/CustomErrorMsg';
 
 
@@ -12,12 +11,18 @@ const ProductDetails = ({ field, form, ...props
     const [value, setValue] = useState('')
     const [productDetails, setProductDetails] = useState({})
 
+
+
     const handleClick = () => {
-        setProductDetails(prev => {
-            return { ...prev, [key]: value }
-        })
-        setKey('')
-        setValue('')
+        if (key && value) {
+            setProductDetails(prev => {
+                return { ...prev, [key]: value }
+            })
+            setKey('')
+            setValue('')
+        } else {
+          alert('Please add product details')
+        }
     }
 
 
@@ -41,12 +46,12 @@ const ProductDetails = ({ field, form, ...props
             <div className='row '>
                 <div className='form-group col'>
                     <InputLabel forHtml="key" label="Product details" />
-                    <input name="key" className='form-control' placeholder='Enter Key' value={key} onChange={(e) => setKey(e.target.value)}   />
+                    <input name="key" className='form-control' placeholder='Enter Key' value={key} onChange={(e) => setKey(e.target.value)} />
                     <CustomErrorMsg name={`productDetails.key`} />
                 </div>
                 <div className='form-group col'>
                     <InputLabel forHtml="value" label="Value" />
-                    <input name="value" className='form-control' placeholder='Enter value' value={value} onChange={(e) => setValue(e.target.value)}  />
+                    <input name="value" className='form-control' placeholder='Enter value' value={value} onChange={(e) => setValue(e.target.value)} />
                 </div>
                 <div className='add-button'>
                     <Button color='primary' onClick={handleClick}>+</Button>
@@ -78,4 +83,4 @@ const ProductDetails = ({ field, form, ...props
         </div>
     )
 }
-export default  ProductDetails
+export default ProductDetails

@@ -5,8 +5,8 @@
 }
 /* Sidebar -----------------css */
 .sidebar-left{
-    height: 100vh;
     width: 250px;
+    height: 100vh;
 }
 .main-right{
     height: 100vh;
@@ -57,4 +57,11 @@
 
 .add-button{
     margin-top: 30px;
+}
+
+
+/* Add product form ================== for Loader */
+
+.visually-hidden {
+    visibility: hidden;
 }

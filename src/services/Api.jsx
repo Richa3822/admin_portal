@@ -1,4 +1,4 @@
-import { axiosObject } from "../App";
+import { axiosObject } from "../App.jsx";
 
  async function saveData(url, body) {
     var response = await axiosObject.post(url, body)

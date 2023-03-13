@@ -51,7 +51,7 @@ const AddProductForm = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState('')
     const [subCategory, setSubCategory] = useState([])
     const [bySubCategory, setBySubCategory] = useState([])
-    // const [loader, setLoader] = useState(false)
+    const [loader, setLoader] = useState(false)
 
     useEffect(() => {
         getData(`category/${selectedCategory}`).then(result => {
@@ -86,17 +86,24 @@ const AddProductForm = () => {
 
     const handleSubmit = async (e, data) => {
         e.preventDefault()
+        setLoader(true)
+        validationSchema.validate(data).then(res => {
+            console.log("res = ", res)
+        })
+            .catch(e => {
+                console.log("e = ", e)
+            })
+        setLoader(true)
         await saveData('product', data).then(response => {
             console.log(response)
+          
+            setLoader(false)
         }).catch(err => {
             console.log(err)
         })
     }
 
-
     return (
-
-
         <Formik
             initialValues={
                 {
@@ -112,175 +119,175 @@ const AddProductForm = () => {
         >
             {({ values, setFieldValue }) => {
                 return (
+                    <>
+                        {loader && <Loader color="primary" />}
 
-                 <>
-                 {/* {<Loader />} */}
-                    <Form onSubmit={(e) => handleSubmit(e, values)}>
-                        <div className='row'>
-                            <div className='col'>
-                                <InputBox htmlFor="name"
-                                    label="Product Name"
-                                    type="text"
-                                    name="name"
-                                    placeholder="Enter Product name"
-                                    inputClass="form-control"
-                                />
-                            </div>
-                            <div className='col'>
-                                <InputBox htmlFor="brand"
-                                    label="Brand"
-                                    type="text"
-                                    name="brand"
-                                    placeholder="Enter Product name"
-                                    inputClass="form-control"
-                                />
-                            </div>
-                        </div>
-
-                        <Field name="productDetails" component={ProductDetails} />
-
-                        <div className='row mt-4'>
-                            <div className='col '>
-                                <InputSelector
-                                    options={options}
-                                    onChange={
-                                        (option) => {
-                                            setSelectedCategory(option.value)
-                                        }}
-                                    label="Category"
-                                    htmlFor="Category"
-                                    value={values.category}
-                                    name="category"
-                                />
-                                <CustomErrorMsg name="category" />
-                            </div>
-
-                            <div className='col'>
-                                <InputSelector
-                                    htmlFor="subCategory"
-                                    label="Sub Category"
-                                    options={subCategory}
-                                    onChange={
-                                        (option) => {
-                                            setSelectedSubCategory(option.value)
-                                    }}
-                                />
-                            </div>
-
-                            <div className='col'>
-
-                                <InputSelector
-                                    htmlFor="subCategory"
-                                    label="Sub Category"
-                                    options={bySubCategory}
-                                    onChange={
-                                        (option) => {
-                                            setFieldValue("category", option.category)
-                                        }}
-                                />
-                            </div>
-
-                        </div>
-                        <div className='mt-5'>
-                        <Field name='image' component={ImageUpload} accept=".jpg,.png" />
-                        </div>
-                        <FieldArray
-                            name="variants"
-                            render={arrayHelpers => (
-                                <div className={values.variants && values.variants.length > 0 ? 'card mt-5' : ''}>
-                                    {values.variants && values.variants.length > 0 ? (
-                                        values.variants.map((variants, index) => (
-
-                                            <div key={`${index}-varients`} >
-
-                                                <div className='card-header d-flex justify-content-between align-items-center '>
-                                                    <div>
-                                                        <h5 ><strong>{`Option ${index + 1}`}</strong></h5>
-                                                    </div>
-                                                    <div>
-                                                        <Button
-                                                            type="button"
-                                                            color='primary'
-                                                            onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                                                        >
-                                                            X
-                                                        </Button>
-                                                    </div>
-                                                </div>
-
-                                                <div className='container-fluid mt-3'>
-                                                    <Field name={`variants.${index}.images`} maxFiles={3} accept=".jpg,.png" component={ImageUpload} multiple />
-                                                    <CustomErrorMsg name={`variants.${index}.images`} />
-
-                                                    <div className='row'>
-                                                        <div className='col'>
-                                                            <InputBox htmlFor="price"
-                                                                label="Price"
-                                                                type="number"
-                                                                name={`variants.${index}.price`}
-                                                                placeholder="Enter Price"
-                                                                inputClass="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className='col'>
-                                                            <InputBox htmlFor="noOfProducts"
-                                                                label="No of Products"
-                                                                type="number"
-                                                                name={`variants.${index}.noOfProducts`}
-                                                                placeholder="Enter Price"
-                                                                inputClass="form-control"
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className='row'>
-                                                        <div className='col'>
-                                                            <InputSelector
-                                                                options={sizeOptions}
-                                                                onChange={option => setFieldValue(`variants.${index}.size`, option.value)}
-                                                                label="Size"
-                                                                htmlFor="Size"
-                                                                name={`variants.${index}.size`}
-                                                            />
-                                                            <CustomErrorMsg name="size" />
-                                                        </div>
-                                                        <div className='col'>
-                                                            <InputBox htmlFor="color"
-                                                                label="Color"
-                                                                type="text"
-                                                                name={`variants.${index}.color`}
-                                                                placeholder="Enter color"
-                                                                inputClass="form-control"
-                                                            />
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : null}
-                                    <div className='container-fluid d-flex justify-content-between align-items-center mt-3 pb-4 '>
-                                        <Button
-                                            type="button"
-                                            color='primary'
-                                            onClick={() => arrayHelpers.push({ images: [], price: "", noOfProducts: "", size: "", color: "" })} // insert an empty string at a position
-                                        >
-                                            Add variants +
-                                        </Button>
-                                    </div>
+                        <Form onSubmit={(e) => handleSubmit(e, values)}>
+                            <div className='row'>
+                                <div className='col'>
+                                    <InputBox htmlFor="name"
+                                        label="Product Name"
+                                        type="text"
+                                        name="name"
+                                        placeholder="Enter Product name"
+                                        inputClass="form-control"
+                                    />
                                 </div>
-                            )}
-                        />
-                        <div className='mt-4 mb-3 float-right'>
-                            <Button color='primary' type="submit">Submit</Button>
-                        </div>
-                    </Form>
+                                <div className='col'>
+                                    <InputBox htmlFor="brand"
+                                        label="Brand"
+                                        type="text"
+                                        name="brand"
+                                        placeholder="Enter Product name"
+                                        inputClass="form-control"
+                                    />
+                                </div>
+                            </div>
+
+                            <Field name="productDetails" component={ProductDetails} />
+
+                            <div className='row mt-4'>
+                                <div className='col '>
+                                    <InputSelector
+                                        options={options}
+                                        onChange={
+                                            (option) => {
+                                                setSelectedCategory(option.value)
+                                            }}
+                                        label="Category"
+                                        htmlFor="Category"
+                                        value={values.category}
+                                        name="category"
+                                    />
+                                    <CustomErrorMsg name="category" />
+                                </div>
+
+                                <div className='col'>
+                                    <InputSelector
+                                        htmlFor="subCategory"
+                                        label="Sub Category"
+                                        options={subCategory}
+                                        onChange={
+                                            (option) => {
+                                                setSelectedSubCategory(option.value)
+                                        }}
+                                    />
+                                </div>
+
+                                <div className='col'>
+
+                                    <InputSelector
+                                        htmlFor="subCategory"
+                                        label="Sub Category"
+                                        options={bySubCategory}
+                                        onChange={
+                                            (option) => {
+                                                setFieldValue("category", option.category)
+                                            }}
+                                    />
+                                </div>
+
+                            </div>
+                            <div className='mt-5'>
+                                <Field name='image' component={ImageUpload} accept=".jpg,.png" />
+                            </div>
+                            <FieldArray
+                                name="variants"
+                                render={arrayHelpers => (
+                                    <div className={values.variants && values.variants.length > 0 ? 'card mt-5' : ''}>
+                                        {values.variants && values.variants.length > 0 ? (
+                                            values.variants.map((variants, index) => (
+
+                                                <div key={`${index}-varients`} >
+
+                                                    <div className='card-header d-flex justify-content-between align-items-center '>
+                                                        <div>
+                                                            <h5 ><strong>{`Option ${index + 1}`}</strong></h5>
+                                                        </div>
+                                                        <div>
+                                                            <Button
+                                                                type="button"
+                                                                color='primary'
+                                                                onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                                            >
+                                                                X
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='container-fluid mt-3'>
+                                                        <Field name={`variants.${index}.images`} maxFiles={3} accept=".jpg,.png" component={ImageUpload} multiple />
+                                                        <CustomErrorMsg name={`variants.${index}.images`} />
+
+                                                        <div className='row'>
+                                                            <div className='col'>
+                                                                <InputBox htmlFor="price"
+                                                                    label="Price"
+                                                                    type="number"
+                                                                    name={`variants.${index}.price`}
+                                                                    placeholder="Enter Price"
+                                                                    inputClass="form-control"
+                                                                />
+                                                            </div>
+                                                            <div className='col'>
+                                                                <InputBox htmlFor="noOfProducts"
+                                                                    label="No of Products"
+                                                                    type="number"
+                                                                    name={`variants.${index}.noOfProducts`}
+                                                                    placeholder="Enter No of Products"
+                                                                    inputClass="form-control"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className='row'>
+                                                            <div className='col'>
+                                                                <InputSelector
+                                                                    options={sizeOptions}
+                                                                    onChange={option => setFieldValue(`variants.${index}.size`, option.value)}
+                                                                    label="Size"
+                                                                    htmlFor="Size"
+                                                                    name={`variants.${index}.size`}
+                                                                />
+                                                                <CustomErrorMsg name="size" />
+                                                            </div>
+                                                            <div className='col'>
+                                                                <InputBox htmlFor="color"
+                                                                    label="Color"
+                                                                    type="text"
+                                                                    name={`variants.${index}.color`}
+                                                                    placeholder="Enter color"
+                                                                    inputClass="form-control"
+                                                                />
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : null}
+                                        <div className='container-fluid d-flex justify-content-between align-items-center mt-3 pb-4 '>
+                                            <Button
+                                                type="button"
+                                                color='primary'
+                                                onClick={() => arrayHelpers.push({ images: [], price: "", noOfProducts: "", size: "", color: "" })} // insert an empty string at a position
+                                            >
+                                                Add variants +
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+                            <div className='mt-4 mb-3 float-right'>
+                                <Button color='primary' type="submit">Submit</Button>
+                            </div>
+                        </Form>
                     </>
                 )
             }}
-            
+
         </Formik>
-      
+
     )
 }
 

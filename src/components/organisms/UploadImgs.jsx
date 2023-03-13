@@ -51,7 +51,12 @@ function UploadImgs({ field, form, ...props }) {
   }
 
   useEffect(() => {
-    setFieldValue(field.name, urls)
+    if(multiple){
+      setFieldValue(field.name, urls)
+    }else{
+      setFieldValue(field.name, urls[0])
+    }
+    
   }, [urls ,field.name,setFieldValue]);
 
   const {getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({

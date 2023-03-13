@@ -8,6 +8,7 @@ import CustomErrorMsg from '../atoms/CustomErrorMsg'
 import ImageUpload from './UploadImgs'
 import ProductDetails from './ProductDetails'
 import { getData, saveData } from '../../services/Api'
+import Loader from '../atoms/Loader'
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Required'),
@@ -50,6 +51,7 @@ const AddProductForm = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState('')
     const [subCategory, setSubCategory] = useState([])
     const [bySubCategory, setBySubCategory] = useState([])
+    // const [loader, setLoader] = useState(false)
 
     useEffect(() => {
         getData(`category/${selectedCategory}`).then(result => {
@@ -84,7 +86,6 @@ const AddProductForm = () => {
 
     const handleSubmit = async (e, data) => {
         e.preventDefault()
-        console.log(data)
         await saveData('product', data).then(response => {
             console.log(response)
         }).catch(err => {
@@ -94,6 +95,8 @@ const AddProductForm = () => {
 
 
     return (
+
+
         <Formik
             initialValues={
                 {
@@ -109,6 +112,9 @@ const AddProductForm = () => {
         >
             {({ values, setFieldValue }) => {
                 return (
+
+                 <>
+                 {/* {<Loader />} */}
                     <Form onSubmit={(e) => handleSubmit(e, values)}>
                         <div className='row'>
                             <div className='col'>
@@ -269,9 +275,12 @@ const AddProductForm = () => {
                             <Button color='primary' type="submit">Submit</Button>
                         </div>
                     </Form>
+                    </>
                 )
             }}
+            
         </Formik>
+      
     )
 }
 

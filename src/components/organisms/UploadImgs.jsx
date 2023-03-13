@@ -14,6 +14,8 @@ function UploadImgs({ field, form, ...props }) {
   const {multiple, maxFiles ,accept} = props;
   const {setFieldValue} = form;
   const [isDragActive, setIsDragActive] = useState(false);
+  const [urls, setUrls] = useState([]);
+  
   
   const onDragEnter = useCallback(() => {
     setIsDragActive(true);
@@ -23,10 +25,7 @@ function UploadImgs({ field, form, ...props }) {
     setIsDragActive(false);
   }, []);
 
-  const setValue = (value) => {
-    setFieldValue(field.name, value)
-    console.log(value + "dmsjdjsdhs")
-  }
+  
   const handleFileChange = async (files) => {
     if (maxFiles && files.length > maxFiles) {
       alert(`You can select a maximum of ${maxFiles} files.`);
@@ -40,12 +39,20 @@ function UploadImgs({ field, form, ...props }) {
       await saveData('imageUpload', formData)
       .then(response => {
         const urlArr = response.urls;
-        setValue(urlArr) 
+        if(multiple){
+          setUrls((prevArr)=>[...prevArr , ...urlArr]);
+        }else{
+          setUrls(urlArr);
+        }
 
       }).catch(err => {
         console.log(err)
       })
   }
+
+  useEffect(() => {
+    setFieldValue(field.name, urls)
+  }, [urls ,field.name,setFieldValue]);
 
   const {getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({
     accept: accept,
@@ -57,9 +64,9 @@ function UploadImgs({ field, form, ...props }) {
   });
 
   function handleRemoveFile(index) {
-    const newFiles = field.value;
+    const newFiles = [...urls];
     newFiles.splice(index, 1);
-    setValue(newFiles);
+    setUrls(newFiles);
   }
 
   return (
@@ -70,7 +77,7 @@ function UploadImgs({ field, form, ...props }) {
       <p >Drag and drop files here or click to select files.</p>
     </div>
     <div className="row">
-        {field.value.map((file, index) => (
+        {urls?.map((file, index) => (
           <div className='col-2 mt-3' key={index}>
             <div className="m-3">
             <img style={{ height: '100px', width: '100px' }} src={file} alt='images' />

@@ -15,6 +15,8 @@ const Topbar = () => {
 
   const toggle = () => setIsOpen(!isOpen);
 
+  let user = JSON.parse(localStorage.getItem('userData'))
+
   return (
     <div>
       <Navbar color="light" light expand="md" style={{borderBottom: '1px solid rgba(0,0,0,0.1)'}}>
@@ -29,7 +31,7 @@ const Topbar = () => {
               <NavLink href="" color='light'>Seller</NavLink>
             </NavItem>
           </Nav>
-          <NavbarText color='light'>Profile</NavbarText>
+          <NavbarText color='light'>{user.firstName}</NavbarText>
         </Collapse>
        
       </Navbar>

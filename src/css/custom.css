@@ -18,3 +18,84 @@
 .error-msg{
     color: red;
 }
+
+:root{
+    --nav-color: #032E63;
+    --button-color: #C00156;
+    --background-color: #F0EFF4;
+    --hightlight-color: #D6B109;
+    --br-color-grey:#afafb1;
+    --light: #f8f9fa;
+    --font-family-menu: Arial,sans-serif;
+  }
+.main-container {
+    min-height: 100vh;
+    background: radial-gradient(rgb(177, 176, 176),var(--nav-color));
+}
+.user-form{
+    flex-direction: column;
+    border: 1px solid var(--button-color);
+    border-radius: 10px;
+    width: 74%;
+    box-shadow: 2px 2px 12px 2px var(--button-color);
+    background:var(--light)!important;
+    z-index: 10;
+    min-height: 786px;
+}
+.form-width {
+    width: 66%;
+}
+.font-family{
+    font-family: var(--font-family-menu)
+}
+.signup-logo {
+    margin-bottom: 15px;
+    font-size: 2rem;
+}
+.website-logo{
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: var(--nav-color);
+}
+.website-logo > img{
+    width: 4rem !important;
+}
+.form-fontsize{
+    font-size: 1rem;
+}
+.form-field{
+    position: relative;
+}
+.form-para {
+    padding-left: 1.5rem !important;
+}
+.form-br{
+    border-color:var(--br-color-grey);
+}
+.sign-up__badge-bg{
+    background-color: var(--hightlight-color);
+    margin-top: 1.5rem;
+}
+.social-icons > img{
+    width: 25px !important;
+    height: 25px;
+}
+.flex-1{
+    flex: 1;
+}
+
+.signup-btn{
+   margin-top: 1rem;
+   background-color: var(--button-color) !important;
+   color:var(--light) !important;
+}
+.form-icon {
+    position: absolute;
+    margin-top: 8px;
+    margin-left: 5px;
+    color: #78787a;
+}
+.msg{
+    z-index: 13;
+}

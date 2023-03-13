@@ -10,7 +10,7 @@ const Sidebar = () => {
         <>
             <Topbar />
             <div className='d-flex justify-content-between align-items-center'>
-                <div className="bg-light sidebar-left" id="sidebar-left"  >
+                <div className="bg-dark sidebar-left" id="sidebar-left"  >
                     <Link to='/'><List name='Dashboard' /></Link>
                     <Link to='/add-product'><List name='Add Products' /></Link>
                     {

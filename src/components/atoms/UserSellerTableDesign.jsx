@@ -11,9 +11,7 @@ const UserSellerTableDesign = ({ data, setData }) => {
     const toggle = () => setOpen(!open);
 
     const confirmation = (confirm) => {
-        // console.log("confirm1 = ", confirm)
         toggle();
-        // console.log("confirm2 = ", typeof confirm)
         if (confirm) {
             setData(prevData => prevData.filter(data => {
                 return data._id !== deleteDataId

@@ -51,8 +51,6 @@ function ViewUsers() {
 
   useEffect(() => {
     const getFilteredData = () => {
-      // console.log(contactNumber)
-
       // --> api call using concept of debouncing
       clearTimeout(timer.current)
       timer.current = setTimeout(() => {
@@ -67,7 +65,6 @@ function ViewUsers() {
   }, [search])
 
   const handleChange = (e) => {
-    // console.log(search)
     setSearch(e.target.value)
   }
 

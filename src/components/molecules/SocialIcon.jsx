@@ -6,7 +6,6 @@ function SocialIcon(props) {
   return (
     <div className={divClass}>
       { urlArr.map((image,i)=>{
-        console.log("image",image)
         return (<ImgTag className={imgClass} imgUrl={`/assets/images/${image}`} altText={image} key={i}/>)
       }) }
     </div>

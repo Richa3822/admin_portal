@@ -145,7 +145,7 @@
 .visually-hidden {
     visibility: hidden;
 }
-thead tr th {
+tr th {
     text-align: center;
 }
 

@@ -10,7 +10,7 @@ import PrivateRoutes from "./components/authentication/Authentication";
 import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
-import UserSellerDetails from "./components/organisms/UserSellerDetails";
+import AddUserSeller from "./components/pages/AddUserSeller";
 
 
 
@@ -33,14 +33,17 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-product" element={<AddProduct />} />
 
-            <Route element={<PrivateRoutes roleRequired="user" />}>
-              <Route path="/view-products" element={<ViewProduct />} />
+
+            <Route path="/view-products" element={<ViewProduct />} />
+            <Route path="/view-orders" element={<ViewOrders />} />
+
+            <Route element={<PrivateRoutes roleRequired="admin" />}>
+              <Route path="/add-user-seller" element={<AddUserSeller />} />
+              <Route path="/view-users" element={<ViewUsers />} />
+              <Route path="/view-sellers" element={<ViewSellers />} />
+              <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
             </Route>
 
-            <Route path="/view-orders" element={<ViewOrders />} />
-            <Route path="/view-users" element={<ViewUsers />} />
-            <Route path="/view-sellers" element={<ViewSellers />} />
-            <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
           </Route>
 
         </Route>

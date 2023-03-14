@@ -7,6 +7,7 @@ import LoginButton from '../atoms/LoginButton'
 import ImgTag from '../atoms/ImgTag'
 import { Formik, Form } from 'formik'
 import * as yup from 'yup';
+import { saveData } from '../../services/Api';
 
 const initialValues = {
     emailId: '',
@@ -24,13 +25,16 @@ function Login() {
     const [msg, setMsg] = useState("");
     function handlesubmit(values) {
         let data = values
-        axios.post('http://localhost:3200/api/user/login', data)
+
+        saveData('user/login', data)
             .then((result) => {
-                console.log(result)
-                if (result.data.status) {
-                    setMsg(result.data.message)
-                    localStorage.setItem('token',result.data.token)
-                    localStorage.setItem('userData',JSON.stringify(result.data.userData))
+                if (result.status) {
+                    setMsg(result.message)
+                    localStorage.setItem('token',result.token)
+                    localStorage.setItem('userData',JSON.stringify(result.userData))
+                }
+                else {
+                    setMsg(result.message)
                 }
             }).catch((error) => {
                 if (error.response) {

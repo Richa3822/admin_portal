@@ -1,26 +1,35 @@
 import { axiosObject } from "../App.jsx";
 
- async function saveData(url, body) {
-    var response = await axiosObject.post(url, body)
-    if (response.status === 200) {
+async function saveData(url, body, headers = { 'Content-Type': 'application/json' }) {
+    try {
+        const response = await axiosObject.post(url, body, headers)
         return response.data;
+
+    } catch (error) {
+        return error.response.data
     }
-    return null;
 }
 
- async function getData(url) {
-    var response = await axiosObject.get(url)
-    if (response.status === 200) {
-        return response.data;
+async function getData(url) {
+    try {
+        const responce = await axiosObject.get(url)
+        return responce.data;
+    } catch (error) {
+        return error.response.data
     }
-    return null;
 }
- async function deleteData(url,id) {
-    var response = await axiosObject.delete(url+id)
-    if (response.status === 200) {
-        return id;
+
+async function deleteData(url, body, headers = { 'Content-Type': 'application/json' }) {
+
+    try {
+        const response = await axiosObject.delete(url, {
+            data: body
+        }, headers)
+        return response.data
+
+    } catch (error) {
+        return error.response.data
     }
-    return null;
 }
 
 export {

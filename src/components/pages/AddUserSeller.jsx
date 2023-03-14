@@ -1,17 +1,13 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom';
 import UserSellerDetails from '../organisms/UserSellerDetails'
 
-function ViewUserSellerDetails() {
-    const locationData = useLocation();
-    const { role } = locationData.state.person;
-
+function AddUserSeller() {
     return (
         <div className='container-fluid'>
             <div className="card ">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 ><strong>{role} data</strong></h5>
+                        <h5 ><strong>Add User or Seller</strong></h5>
                     </div>
                 </div>
 
@@ -25,4 +21,4 @@ function ViewUserSellerDetails() {
     )
 }
 
-export default ViewUserSellerDetails
+export default AddUserSeller

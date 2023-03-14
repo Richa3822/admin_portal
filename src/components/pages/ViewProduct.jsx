@@ -3,33 +3,35 @@ import { Input, Spinner } from 'reactstrap'
 import { LIMIT, WAITING_TIMING } from '../../constants/Constant';
 import TableDesign from '../atoms/TableDesign'
 import Pagination from '../molecules/Pagination';
-import { getData } from '../../services/axios'
+import { getData } from '../../services/Api'
+import Loader from '../atoms/Loader';
 
 const ViewProduct = () => {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const [totalProducts, setTotalProducts] = useState(0);
+    const [deletedId, setDeletedId] = useState("");
     let timer = useRef();
 
     const [data, setData] = useState([]);
+    const [isLoad, setIsLoad] = useState(false);
+
+    const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
 
     useEffect(() => {
         const getFilteredData = () => {
-            // console.log(contactNumber)
-
-            // --> api call using concept of debouncing
             clearTimeout(timer.current)
+            setIsLoad(false)
             timer.current = setTimeout(async () => {
-                console.log(search)
-
                 try {
-                    const url = `/product/?search=${search}&page=${page}&limit=${LIMIT}`;
+                    const url = `product/?isAdminSide=true&search=${search}&page=${page}&limit=${LIMIT}&sellerId=${user?.role === 'seller' ? user?._id : ""}`;
 
-                    const res = await getData({ url })
+                    const res = await getData(url)
 
                     setData(res.products);
                     setTotalProducts(res.count)
-                    
+                    setIsLoad(true)
+
                 } catch (e) {
                     alert("error occur, please reload again")
                 }
@@ -38,7 +40,7 @@ const ViewProduct = () => {
 
         getFilteredData()
 
-    }, [search, page])
+    }, [search, page, deletedId])
 
     const handleChange = (e) => {
         setSearch(e.target.value)
@@ -47,7 +49,6 @@ const ViewProduct = () => {
     }
 
     const handlePageClick = (e) => {
-        console.log(e)
         setData([])
         setPage(e.selected + 1)
     }
@@ -67,10 +68,16 @@ const ViewProduct = () => {
 
             <div className='mt-5 ml-5' style={{ minHeight: '620px' }} >
                 <div className="mr-5 mb-2">Total Products = {totalProducts}</div>
-                <TableDesign data={data} setData={setData} />
+                {
+                    isLoad
+                        ?
+                        <TableDesign data={data} setData={setData} setDeletedId={setDeletedId} />
+                        :
+                        <Loader />
+                }
             </div>
 
-            <Pagination totalCount={totalProducts} handlePageClick={handlePageClick} />
+            <Pagination totalCount={totalProducts} currentPage={page - 1} handlePageClick={handlePageClick} />
         </div>
     )
 }

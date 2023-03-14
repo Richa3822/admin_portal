@@ -11,17 +11,17 @@ import { getData, saveData } from '../../services/Api'
 import Loader from '../atoms/Loader'
 
 const validationSchema = Yup.object({
-    name: Yup.string().required('Required'),
-    brand: Yup.string().required('Required'),
-    productDetails: Yup.object({}).required('Required'),
-    category: Yup.string().required('Required'),
-    image: Yup.string().required('Required'),
+    name: Yup.string().required('Name is Required'),
+    brand: Yup.string().required('Brand name is Required'),
+    productDetails: Yup.object({}).required('Product Details is Required'),
+    category: Yup.string().required('Category is Required'),
+    image: Yup.string().required('Image is Required'),
     variants: Yup.array().of(Yup.object({
         images: Yup.array().required('Minimum one image is required'),
-        price: Yup.number().required('Required'),
-        size: Yup.string().required('Required'),
-        color: Yup.string().required('Required'),
-        noOfProducts: Yup.number().required('Required'),
+        price: Yup.number().required('Price is Required'),
+        size: Yup.string().required('Size is Required'),
+        color: Yup.string().required('Color is Required'),
+        noOfProducts: Yup.number().required('No of Products Required'),
     }))
 })
 
@@ -52,6 +52,9 @@ const AddProductForm = () => {
     const [subCategory, setSubCategory] = useState([])
     const [bySubCategory, setBySubCategory] = useState([])
     const [loader, setLoader] = useState(false)
+    const [sellers, setSellers] = useState([]);
+
+    const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
 
     useEffect(() => {
         getData(`category/${selectedCategory}`).then(result => {
@@ -88,25 +91,51 @@ const AddProductForm = () => {
         e.preventDefault()
         setLoader(true)
         validationSchema.validate(data).then(res => {
-            console.log("res = ", res)
-        })
-            .catch(e => {
-                console.log("e = ", e)
+            saveData('product', data)
+                .then(response => {
+                    setLoader(false)
+                    alert(response.message)
+                    e.target.reset();
+
+                }).catch(err => {
+                    setLoader(false)
+                    alert(err.message)
+                })
             })
-        setLoader(true)
-        await saveData('product', data).then(response => {
-            console.log(response)
-          
-            setLoader(false)
-        }).catch(err => {
-            console.log(err)
-        })
+            .catch(e => {
+                setLoader(false)
+                alert(e.message)
+            })
+
+
     }
+
+    useEffect(() => {
+
+        async function getSellers() {
+            const allSellers = await getData(`user/?role=seller`);
+
+            allSellers?.users?.filteredUsers.forEach(seller => {
+                setSellers(prevSellers => [...prevSellers, {
+                    sellerId: seller._id,
+                    label: seller.emailId,
+                    value: seller.emailId
+                }])
+            });
+        }
+        if (user?.role === 'admin') {
+            setSellers([]);
+            getSellers();
+        }
+
+    }, [])
+
 
     return (
         <Formik
             initialValues={
                 {
+                    sellerId: user?.role === 'seller' ? user?._id : "",
                     name: "",
                     brand: "",
                     productDetails: {},
@@ -123,6 +152,28 @@ const AddProductForm = () => {
                         {loader && <Loader color="primary" />}
 
                         <Form onSubmit={(e) => handleSubmit(e, values)}>
+                            {
+                                user?.role === 'admin'
+                                    ?
+                                    <div className='row'>
+                                        <div className='col-6 '>
+                                            <InputSelector
+                                                options={sellers}
+                                                onChange={
+                                                    option => {
+                                                        setFieldValue("sellerId", option.sellerId)
+                                                    }}
+                                                label="Select Seller"
+                                                htmlFor="Seller"
+                                                name="sellerId"
+                                            />
+                                            <CustomErrorMsg name="sellerId" />
+                                        </div>
+                                    </div>
+                                    :
+                                    null
+                            }
+
                             <div className='row'>
                                 <div className='col'>
                                     <InputBox htmlFor="name"
@@ -170,7 +221,7 @@ const AddProductForm = () => {
                                         onChange={
                                             (option) => {
                                                 setSelectedSubCategory(option.value)
-                                        }}
+                                            }}
                                     />
                                 </div>
 

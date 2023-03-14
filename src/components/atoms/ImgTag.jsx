@@ -1,9 +1,9 @@
 import React from 'react'
 
 function ImgTag(props) {
-    const {imgUrl,altText ,className}= props;
+  const { imgUrl, altText, className, width } = props;
   return (
-    <img className={className} src={imgUrl} alt={altText} />
+    <img className={className} width={width} src={imgUrl} alt={altText} />
   )
 }
 

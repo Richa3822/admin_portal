@@ -2,9 +2,7 @@
 import { Navigate, Outlet } from 'react-router-dom'
 const PrivateRoutes = (props) => {
   const token = localStorage.getItem("token")
- const user = JSON.parse(localStorage.getItem("userData"))
-console.log(props.roleRequired)
-
+  const user = JSON.parse(localStorage.getItem("userData"))
 
   let auth = { 'token': true }
   if (token) {
@@ -14,19 +12,19 @@ console.log(props.roleRequired)
   }
 
 
-if(props.roleRequired){
-return auth.token? (
-  props.roleRequired === user.role ? (
-    <Outlet/>
-  ):(
-    <Navigate to = "/"/>
-  )
-  ):(
-    <Navigate to = "/login"/>
-  )
-}else{
-  return auth.token ? <Outlet /> : <Navigate to='/login' />
-}
+  if (props.roleRequired) {
+    return auth.token ? (
+      props.roleRequired === user.role ? (
+        <Outlet />
+      ) : (
+        <Navigate to="/" />
+      )
+    ) : (
+      <Navigate to="/login" />
+    )
+  } else {
+    return auth.token && (user.role === 'admin' || user.role === 'seller') ? <Outlet /> : <Navigate to='/login' />
+  }
 }
 
 export default PrivateRoutes

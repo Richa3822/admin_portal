@@ -172,3 +172,37 @@ tr th {
     width: 300px !important;
     margin: 10px;   
 }
+/* reset password page*/
+.reset-form {
+    width: 600px;
+    margin: 70px auto;
+    font-size: 16px;
+    padding: 20px;
+}
+  .reset-form-header {
+    background: white;
+    padding: 20px;
+    font-size: 1.4em;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #000;
+  }
+  .reset-form-container {
+    background: white;
+    padding: 20px;
+  }
+ .reset-pwd-button{
+    background: #28d;
+    border-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.4em;
+    font-weight: normal;
+    text-align: center;
+    margin-top: 25px;
+  }
+  .reset-pwd-button:hover {
+    background: #17c;
+    outline: none;
+  }

@@ -31,8 +31,8 @@ function UserSellerDetails() {
                 emailId: "",
                 contactNumber: "",
                 role: "Select",
-                password: "",
-                confirmPassword: "",
+                // password: "",
+                // confirmPassword: "",
                 address: {
                     name: "",
                     contactNumber: "",
@@ -51,8 +51,8 @@ function UserSellerDetails() {
         firstName: Yup.string().required('Required'),
         lastName: Yup.string().required('Required'),
         emailId: Yup.string().email("please enter valid emailId ").required('Required'),
-        password: Yup.string().min(8, "Password must has 8 characters").required("Required"),
-        confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords must match").required("Required"),
+        // password: Yup.string().min(8, "Password must has 8 characters").required("Required"),
+        // confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords must match").required("Required"),
         contactNumber: Yup.string().matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number").required('Required'),
         role: Yup.string().required('Required'),
 
@@ -94,8 +94,8 @@ function UserSellerDetails() {
         emailId: emailId,
         contactNumber: contactNumber,
         role: role,
-        password: "",
-        confirmPassword: "",
+        // password: "",
+        // confirmPassword: "",
         address: address,
         companyName: companyName,
         rating: rating
@@ -114,7 +114,6 @@ function UserSellerDetails() {
             const data = await getData("address/countries")
             setData(data.data, setCountry);
         }
-
         fetchCountries()
     }, [])
 
@@ -250,7 +249,7 @@ function UserSellerDetails() {
                                         </div>
                                     </div>
 
-                                    <div className='row'>
+                                    {/* <div className='row'>
                                         <div className='col-lg-6'>
                                             <InputBox
                                                 htmlFor="password"
@@ -273,7 +272,7 @@ function UserSellerDetails() {
                                                 inputClass="form-control"
                                             />
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     <div className='row'>
                                         <div className='col-lg-6'>

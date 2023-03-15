@@ -64,7 +64,7 @@ function Login() {
                             <div className="msg position-absolute w-100">
                                 {
                                     msg && msg !== "login successfull!"
-                                        ?<p className='text-danger'>Invalid emailId or password</p>
+                                        ?<p className='text-danger'>{msg}</p>
                                             : navigate('/')
                                 }
                             </div>

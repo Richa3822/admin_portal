@@ -11,11 +11,12 @@ import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
-
+import ResetPassword from "./components/pages/ResetPassword";
+import ResetToken from './components/organisms/ResetToken'
 
 
 export const axiosObject = axios.create({
-  baseURL: 'http://localhost:4000/api/',
+  baseURL: 'http://localhost:4001/api/',
   headers: {
     "Access-Control-Allow-Origin": "*"
   }
@@ -26,7 +27,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-
+        <Route path="/reset-password/:token" element={<ResetToken />}/>
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<PrivateRoutes />}>
 
           <Route path="/" element={<Sidebar />} >

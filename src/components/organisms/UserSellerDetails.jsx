@@ -19,7 +19,17 @@ function UserSellerDetails() {
 
     const [cities, setCities] = useState([]);
 
-
+    function generatePassword(setFieldValue) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < 8) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        setFieldValue('password',result);
+    }
     const { firstName, lastName, emailId, contactNumber, role, address, companyName, rating } =
         locationData?.state?.person
             ?
@@ -31,8 +41,7 @@ function UserSellerDetails() {
                 emailId: "",
                 contactNumber: "",
                 role: "Select",
-                // password: "",
-                // confirmPassword: "",
+                password: "",
                 address: {
                     name: "",
                     contactNumber: "",
@@ -51,7 +60,7 @@ function UserSellerDetails() {
         firstName: Yup.string().required('Required'),
         lastName: Yup.string().required('Required'),
         emailId: Yup.string().email("please enter valid emailId ").required('Required'),
-        // password: Yup.string().min(8, "Password must has 8 characters").required("Required"),
+        password: Yup.string().min(8, "Password must has 8 characters").required("Required"),
         // confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords must match").required("Required"),
         contactNumber: Yup.string().matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number").required('Required'),
         role: Yup.string().required('Required'),
@@ -94,7 +103,7 @@ function UserSellerDetails() {
         emailId: emailId,
         contactNumber: contactNumber,
         role: role,
-        // password: "",
+        password: "",
         // confirmPassword: "",
         address: address,
         companyName: companyName,
@@ -249,7 +258,7 @@ function UserSellerDetails() {
                                         </div>
                                     </div>
 
-                                    {/* <div className='row'>
+                                     <div className='row'>
                                         <div className='col-lg-6'>
                                             <InputBox
                                                 htmlFor="password"
@@ -260,9 +269,16 @@ function UserSellerDetails() {
                                                 inputClass="form-control"
                                             />
                                         </div>
+                                        <Button
+                                        className='generate-btn'
+                                        type="button"
+                                        color='primary'
+                                        onClick={()=>generatePassword(setFieldValue)}
+                                    >
+                                        generate password
+                                    </Button>
 
-
-                                        <div className='col-lg-6'>
+                                       {/* <div className='col-lg-6'>
                                             <InputBox
                                                 htmlFor="confirmPassword"
                                                 label="Confirm Password"
@@ -271,8 +287,8 @@ function UserSellerDetails() {
                                                 placeholder="Enter Confirm Password"
                                                 inputClass="form-control"
                                             />
-                                        </div>
-                                    </div> */}
+                                        </div>*/}
+                                    </div> 
 
                                     <div className='row'>
                                         <div className='col-lg-6'>

@@ -12,8 +12,8 @@ async function saveData(url, body, headers = { 'Content-Type': 'application/json
 
 async function getData(url) {
     try {
-        const responce = await axiosObject.get(url)
-        return responce.data;
+        const response = await axiosObject.get(url)
+        return response.data;
     } catch (error) {
         return error.response.data
     }
@@ -32,8 +32,20 @@ async function deleteData(url, body, headers = { 'Content-Type': 'application/js
     }
 }
 
+async function updateData(url , body , headers = { 'Content-Type': 'application/json' }){
+    try {
+        const response = await axiosObject.patch(url,{
+            data : body
+        },headers)
+        return response.data
+    } catch (error) {
+        return error.response.data
+    }
+}
+
 export {
     saveData,
     getData,
-    deleteData
+    deleteData,
+    updateData
 }

@@ -6,46 +6,29 @@ import FormInput from '../molecules/FormInput'
 import LoginButton from '../atoms/LoginButton'
 import ImgTag from '../atoms/ImgTag'
 import { Formik, Form } from 'formik'
-import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 import { saveData } from '../../services/Api';
 import Loader from '../atoms/Loader';
 
 const initialValues = {
     emailId: '',
-    password: ''
 }
 
 const validationSchema = yup.object({
     emailId: yup.string().email('enter valid email').required('required !'),
-    password: yup.string().required('required !')
 })
 
-function Login({ isNewSeller }) {
-    const navigate = useNavigate()
+function ForgottenPasswordForm() {
     const [loader, setLoader] = useState(false);
     const [msg, setMsg] = useState("");
 
     function handlesubmit(values) {
         setLoader(true);
-        let data = values
-
-        saveData('user/login', data)
+        let email = values.emailId;
+        saveData(`password/forgotten-password/${email}`)
             .then((result) => {
                 setLoader(false);
-                if (result.status) {
-                    setMsg(result.message)
-                    localStorage.setItem('token', result.token)
-                    localStorage.setItem('userData', JSON.stringify(result.userData))
-                    if (isNewSeller == false) {
-                        navigate('/set-password');
-                    } else {
-                        navigate('/');
-                    }
-                }
-                else {
-                    setMsg(result.message)
-                }
+                setMsg(result.message)
             }).catch((error) => {
                 setLoader(false);
                 if (error.response) {
@@ -56,45 +39,42 @@ function Login({ isNewSeller }) {
 
 
     return (
-        <div className="main-container d-flex">
-            <div className="flex-1 d-flex">
-                <ImgTag className="w-100" imgUrl="/assets/images/bac_removed_3.png" altText='backgroud img' />
-                <img src="" alt="" />
-            </div>
+        <>
+            {
+                // loader
+                //     ?
+                    // <Loader color='primary' />
+                    // :
+                    // null
+            }
             <div className="d-flex flex-1 align-items-center">
                 <div className="user-form d-flex align-items-center justify-content-center">
                     <Formik
                         initialValues={initialValues} validationSchema={validationSchema} onSubmit={handlesubmit}>
                         <Form className="form-width">
                             <div className=" d-flex justify-content-between align-items-center">
-                                <div className="signup-logo">Login</div>
+                                <div className="signup-logo">forgotten password</div>
                                 <div className="website-logo d-flex justify-content-center align-items-center">
                                     <ImgTag className="w-100" imgUrl='/assets/images/logo1.png' altText='backgroud img' />
                                 </div>
+                                {loader  ? <Loader color='primary' />:null}
                             </div>
-                            <div className="msg position-absolute w-100">
+                            <div className="msg  w-100">
                                 {
                                     msg && msg !== "login successfull!"
                                         ? <p className='text-danger'>{msg}</p>
-                                        : navigate('/')
+                                        : null
                                 }
                             </div>
                             <br />
-                            {loader ? <Loader color='primary' /> : null}
                             <FormInput outerDivClass='form-fontsize mt-2' htmlFor='email' label='Email' fieldClass='form-field' iconClass='fa-solid fa-envelope form-icon' type='email' inputClass='form-control form-para form-br' id='email' name='emailId' placeholder="   Enter email" />
-                            <FormInput outerDivClass='form-fontsize mt-2' htmlFor='password' label='Password ' fieldClass='form-field' iconClass='fa-solid fa-lock form-icon' type='password' inputClass='form-control form-para form-br' id='password' name='password' placeholder="   password" />
-                            <div class="col">
-                                <Link to='/forgotten-password'>Forgot password?</Link>
-                            </div>
-                            <LoginButton type='submit' className='btn w-100 signup-btn' buttonText='Login' />
+                            <LoginButton type='submit' className='btn w-100 signup-btn' buttonText='Send varification mail' />
                         </Form>
                     </Formik>
                 </div>
             </div>
-            <div>
-            </div>
-        </div>
+        </>
     )
 }
 
-export default Login
+export default ForgottenPasswordForm

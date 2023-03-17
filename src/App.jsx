@@ -11,12 +11,15 @@ import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
-import ResetPassword from "./components/pages/ResetPassword";
-import ResetToken from './components/organisms/ResetToken'
+import SetPassword from "./components/pages/SetPassword";
+import SetToken from './components/organisms/setToken';
+import ChangePassword from './components/pages/ChangePassword'
+import ProfileFlyOut from "./components/organisms/ProfileFlyOut";
+import ForgottenPassword from "./components/pages/ForgottenPassword";
 
 
 export const axiosObject = axios.create({
-  baseURL: 'http://localhost:4001/api/',
+  baseURL: 'http://localhost:8000/api/',
   headers: {
     "Access-Control-Allow-Origin": "*"
   }
@@ -24,13 +27,17 @@ export const axiosObject = axios.create({
 
 function App() {
   return (
+    <>
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/reset-password/:token" element={<ResetToken />}/>
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/set-password/:token" element={<SetToken path='login' />}/>
+        <Route path="/set-password" element={<SetPassword />} />
+        <Route path="/reset-password/:token" element={<SetToken path='reset-password'/>}/>
+        <Route path="/reset-password" element={<SetPassword />} />
+        <Route path="/forgotten-password" element={<ForgottenPassword />} />
         <Route element={<PrivateRoutes />}>
-
+        <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/" element={<Sidebar />} >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-product" element={<AddProduct />} />
@@ -45,12 +52,11 @@ function App() {
               <Route path="/view-sellers" element={<ViewSellers />} />
               <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
             </Route>
-
           </Route>
-
         </Route>
       </Routes>
     </Router>
+    </>
   );
 }
 

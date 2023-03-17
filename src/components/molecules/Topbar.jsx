@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import Logout from '../../services/Logout';
+
 import {
   Collapse,
   Navbar,
@@ -10,13 +13,24 @@ import {
   NavbarText
 } from 'reactstrap';
 import ImgTag from '../atoms/ImgTag';
+import Login from '../organisms/Login';
 
 const Topbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
   let user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
+
+function set(){
+  setRedirectToLogin(true)
+}
+
+  if (redirectToLogin) {
+    return <Navigate to="/login" />;
+  }
+
 
   return (
     <div>
@@ -29,8 +43,10 @@ const Topbar = () => {
           <Nav className="mr-auto" navbar>
           </Nav>
           <NavbarText color='light'>{user.firstName}</NavbarText>
+          <div style={{marginLeft:'1rem'}}>
+          <NavbarText color='light' onClick={()=>{Logout();set()}}>Log out</NavbarText>
+          </div>
         </Collapse>
-
       </Navbar>
     </div>
   );

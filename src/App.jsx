@@ -13,10 +13,11 @@ import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
 import ResetPassword from "./components/pages/ResetPassword";
 import ResetToken from './components/organisms/ResetToken'
+import AddOffers from "./components/pages/AddOffers";
 
 
 export const axiosObject = axios.create({
-  baseURL: 'http://localhost:4001/api/',
+  baseURL: 'http://localhost:4000/api/',
   headers: {
     "Access-Control-Allow-Origin": "*"
   }
@@ -38,6 +39,7 @@ function App() {
 
             <Route path="/view-products" element={<ViewProduct />} />
             <Route path="/view-orders" element={<ViewOrders />} />
+            <Route path="/add-offers" element={<AddOffers />} />
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />

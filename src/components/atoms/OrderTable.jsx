@@ -1,47 +1,69 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap';
 import Button, { ButtonType } from './Button';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 function OrderTable({ data, setData }) {
+    let [_Id,set_Id]= useState("");
+
+ 
+    useEffect((oid)=>{
+        set_Id(oid);
+    },[_Id])
+
 
     return (
         <Table hover>
             <thead>
                 <tr>
                     <th style={{ width: "5%" }}>#</th>
-                    <th style={{ width: "18%" }}>Order Id</th>
+                    <th style={{ width: "20%" }}>Order Id</th>
                     <th style={{ width: "10%" }}>Total Products</th>
-                    <th style={{ width: "15%" }}>Order Date</th>
-                    <th style={{ width: "7%" }}>Status</th>
-                    <th style={{ width: "17%" }}>Customer Contact No.</th>
-                    <th style={{ width: "13%" }}>Total</th>
-                    <th style={{ width: "7%" }}>Payment</th>
+                    <th style={{ width: "14%" }}>Order Date</th>
+                    <th style={{ width: "14%" }}>Delivery Date</th>
+                    <th style={{ width: "8%" }}>Status</th>
+                    <th style={{ width: "10%" }}>Contact No.</th>
+                    <th style={{ width: "10%" }}>Total</th>
                 </tr>
             </thead>
 
             <tbody>
                 {
+                   
                     data?.map((order, index) => {
-                        const { oid, totalProducts, orderDate, total, status, payment, customerNo } = order;
-
+                        const {_Id,orderDate,deliveryDate,totalAmount,status, user:{contactNo}} = order;
+                        // const { contactNo } = user;
+                        const totalProducts = order.products.length;
+                        
+                        // console.log(order);
+                        ///const { oid, totalProducts, orderDate, total, status, payment, customerNo } = order;
                         return (
-                            <tr key={oid} >
+                            <tr key={_Id} >
                                 <th scope="row">{index + 1}</th>
-                                <td className='ellipsis' ><span>{oid}</span></td>
+                                <td className='ellipsis' ><span>{_Id}</span></td>
                                 <td className='ellipsis' ><span>{totalProducts}</span></td>
                                 <td className='ellipsis' ><span>{orderDate}</span></td>
+                                <td className='ellipsis' ><span>{deliveryDate}</span></td>
                                 <td className='ellipsis' ><span className={`badge badge-pill ${getColorByOrderStatus(status)}`} >{status}</span></td>
-                                <td className='ellipsis' ><span >{customerNo}</span></td>
-                                <td className='ellipsis' ><span>{total}</span></td>
-                                <td className='ellipsis' ><span className={`badge badge-pill ${getColorByPayment(payment)}`}>{payment}</span></td>
-
-                                <td className='d-flex justify-content-between border-0'>
+                                <td className='ellipsis' ><span >{contactNo}</span></td>
+                                <td className='ellipsis' ><span>{totalAmount}</span></td>
+                                <td className='d-flex justify-content-between'>
+                                
                                     <div>
-                                        <Button ButtonType={ButtonType.DELETE} />
+                                       <Button ButtonType={ButtonType.DELETE} ></Button>    
                                     </div>
+                                    
+                                 
                                     <div>
-                                        <Button ButtonType={ButtonType.EDIT} />
+                                        <Link  to={{pathname:"/update-order",search:_Id}} className='update-order-button'>
+                                            <Button  ButtonType={ButtonType.EDIT}>
+                                            </Button>
+                                        </Link>
+                                        
                                     </div>
+        
                                 </td>
                             </tr>
                         )

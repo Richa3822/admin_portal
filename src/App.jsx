@@ -11,7 +11,9 @@ import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
-
+import ResetPassword from "./components/pages/ResetPassword";
+import ResetToken from './components/organisms/ResetToken'
+import AddOffers from "./components/pages/AddOffers";
 
 
 export const axiosObject = axios.create({
@@ -26,7 +28,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-
+        <Route path="/reset-password/:token" element={<ResetToken />}/>
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<PrivateRoutes />}>
 
           <Route path="/" element={<Sidebar />} >
@@ -39,6 +42,7 @@ function App() {
               <Route path=":id" element={<AddProduct />} />
             </Route>
             <Route path="/view-orders" element={<ViewOrders />} />
+            <Route path="/add-offers" element={<AddOffers />} />
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />

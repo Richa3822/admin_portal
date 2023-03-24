@@ -22,8 +22,8 @@ function UserSellerDetails() {
 			emailId: "",
 			contactNumber: "",
 			role: "Select",
-			password: "",
-			confirmPassword: "",
+			// password: "",
+			// confirmPassword: "",
 			address: {
 				name: "",
 				contactNumber: "",
@@ -58,7 +58,7 @@ function UserSellerDetails() {
 						companyName: data.user.sellerAdditionalData.companyName,
 						rating: data.user.sellerAdditionalData.rating,
 					};
-                    
+
 					if (data.status) {
 						setObject("initialValues", tempObj);
 					}
@@ -79,17 +79,17 @@ function UserSellerDetails() {
 		emailId: Yup.string()
 			.email("please enter valid emailId ")
 			.required("Required"),
-		password: Yup.string()
-			.min(8, "Password must has 8 characters")
-			.required("Required")
-			.test("isEditUserMode", "Invalid Mode", (value) => {
-				console.log("value password = ", value);
+		// password: Yup.string()
+		// 	.min(8, "Password must has 8 characters")
+		// 	.required("Required")
+		// 	.test("isEditUserMode", "Invalid Mode", (value) => {
+		// 		console.log("value password = ", value);
 
-				return true;
-			}),
-		confirmPassword: Yup.string()
-			.oneOf([Yup.ref("password"), null], "Passwords must match")
-			.required("Required"),
+		// 		return true;
+		// 	}),
+		// confirmPassword: Yup.string()
+		// 	.oneOf([Yup.ref("password"), null], "Passwords must match")
+		// 	.required("Required"),
 		contactNumber: Yup.string()
 			.matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number")
 			.required("Required"),
@@ -207,6 +207,103 @@ function UserSellerDetails() {
 		});
 	}
 
+	const handleSubmit = async (e, values) => {
+		e.preventDefault();
+
+		validation
+			.validate(values)
+			.then(async (res) => {
+				const tempObj = { ...values, address: { ...values.address } };
+				delete tempObj.confirmPassword;
+				setStates("loader", true);
+				console.log("temp = ", tempObj);
+
+				if (!isEditUserMode) {
+					try {
+						const data = await saveData("user", tempObj);
+						console.log(" data = ", data);
+						setStates("loader", false);
+						if (data.status) {
+							alert(data.message);
+							e.target.reset();
+						} else {
+							alert(data.message);
+						}
+					} catch (e) {
+						setStates("loader", false);
+						alert(e.message);
+					}
+				} else {
+					try {
+						console.log("user = ", tempObj);
+						const data = await axiosPut(`user/${userId}`, tempObj);
+
+						setStates("loader", false);
+						if (data.status) {
+							alert(data.message);
+							e.target.reset();
+						} else {
+							alert(data.message);
+						}
+					} catch (e) {
+						setStates("loader", false);
+						alert(e.message);
+					}
+				}
+			})
+			.catch((e) => {
+				console.log("e = ", e);
+				setStates("loader", false);
+				alert(e.message);
+			});
+
+		// const tempObj = { ...values, address: { ...values.address } };
+		// delete tempObj.confirmPassword;
+		// console.log(" = ", values);
+		// async function createUser() {
+		// 	try {
+		// 		const data = await saveData("user", tempObj);
+		// 		console.log(" data = ", data);
+		// 		setStates("loader", false);
+		// 		if (data.status) {
+		// 			alert(data.message);
+		// 			resetForm();
+		// 		} else {
+		// 			alert(data.message);
+		// 		}
+		// 	} catch (e) {
+		// 		setStates("loader", false);
+		// 		alert(e.message);
+		// 	}
+		// }
+
+		// async function updateUser() {
+		// 	try {
+		// 		console.log("user = ", tempObj);
+		// 		const data = await axiosPut(`user/${userId}`, tempObj);
+
+		// 		setStates("loader", false);
+		// 		if (data.status) {
+		// 			alert(data.message);
+		// 			resetForm();
+		// 		} else {
+		// 			alert(data.message);
+		// 		}
+		// 	} catch (e) {
+		// 		setStates("loader", false);
+		// 		alert(e.message);
+		// 	}
+		// }
+
+		// setStates("loader", true);
+		// if (isEditUserMode) {
+		// 	updateUser();
+		// } else {
+		// 	console.log("create");
+		// 	createUser();
+		// }
+	};
+
 	return (
 		<div>
 			{statesObject.loader ? (
@@ -215,11 +312,11 @@ function UserSellerDetails() {
 				<Formik
 					initialValues={statesObject.initialValues}
 					validationSchema={validation}
-					enableReinitialize={true}
-					onSubmit={(values, { resetForm, setFieldValue }) => {
+					// enableReinitialize={true}
+					onSubmit={(values, { resetForm }) => {
 						const tempObj = { ...values, address: { ...values.address } };
 						delete tempObj.confirmPassword;
-
+						console.log(" = ", values);
 						async function createUser() {
 							try {
 								const data = await saveData("user", tempObj);
@@ -259,11 +356,13 @@ function UserSellerDetails() {
 						if (isEditUserMode) {
 							updateUser();
 						} else {
+							console.log("create");
 							createUser();
 						}
 					}}
 				>
 					{({ values, setFieldValue }) => {
+						console.log(values);
 						return (
 							<>
 								{statesObject.loader ? <Loader /> : null}
@@ -317,7 +416,7 @@ function UserSellerDetails() {
 										</div>
 									</div>
 
-									<div className="row">
+									{/* <div className="row">
 										<div className="col-lg-6">
 											<InputBox
 												htmlFor="password"
@@ -339,7 +438,7 @@ function UserSellerDetails() {
 												inputClass="form-control"
 											/>
 										</div>
-									</div>
+									</div> */}
 
 									<div className="row">
 										<div className="col-lg-6">
@@ -498,7 +597,12 @@ function UserSellerDetails() {
 										</div>
 									) : null}
 
-									<Button className="mt-3" type="submit" color="primary">
+									<Button
+										className="mt-3"
+										type="submit"
+										color="primary"
+										// onClick={(e) => handleSubmit(e, values)}
+									>
 										{locationData.pathname === "/add-user-seller"
 											? `Add ${values.role !== "Select" ? values.role : ""}`
 											: "Update"}

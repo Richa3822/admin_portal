@@ -32,8 +32,32 @@ async function deleteData(url, body, headers = { 'Content-Type': 'application/js
     }
 }
 
+async function axiosPatch(url, body) {
+    try {
+        const responce = await axiosObject.patch(url, body);
+        console.log("patch data = ", responce);
+
+        return responce.data
+    } catch (error) {
+        return error.responce.data
+    }
+}
+
+async function axiosPut(url, body) {
+    try {
+        const responce = await axiosObject.put(url, body);
+        console.log("put data = ", responce);
+
+        return responce.data
+    } catch (error) {
+        return error.responce.data
+    }
+}
+
 export {
     saveData,
     getData,
-    deleteData
+    deleteData,
+    axiosPatch,
+    axiosPut
 }

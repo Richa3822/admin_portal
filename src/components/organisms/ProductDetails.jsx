@@ -4,14 +4,12 @@ import InputLabel from '../atoms/InputLabel';
 import CustomErrorMsg from '../atoms/CustomErrorMsg';
 
 
-const ProductDetails = ({ field, form, ...props
+const ProductDetails = ({ field, form, details, ...props
 }) => {
     const { setFieldValue } = form
     const [key, setKey] = useState('')
     const [value, setValue] = useState('')
-    const [productDetails, setProductDetails] = useState({})
-
-
+    const [productDetails, setProductDetails] = useState(details ? details : {})
 
     const handleClick = () => {
         if (key && value) {
@@ -21,7 +19,7 @@ const ProductDetails = ({ field, form, ...props
             setKey('')
             setValue('')
         } else {
-          alert('Please add product details')
+            alert('Please add product details')
         }
     }
 
@@ -58,7 +56,8 @@ const ProductDetails = ({ field, form, ...props
                 </div>
             </div>
 
-            {objectLength > 0 ?
+            {console.log("length = ", objectLength)}
+            {objectLength ?
                 <Table hover className='shadow mt-5'>
                     <thead >
                         <tr className='border-0'>
@@ -67,6 +66,8 @@ const ProductDetails = ({ field, form, ...props
                         </tr>
                     </thead>
                     <tbody>
+                        {console.log("product details = ", productDetails)}
+                        {console.log("product details = ", Object.keys(productDetails))}
                         {Object.keys(productDetails).map((element, index) => {
                             return (
                                 <tr key={index}>
@@ -79,7 +80,9 @@ const ProductDetails = ({ field, form, ...props
                         })}
                     </tbody>
                 </Table>
-                : null}
+                :
+                <></>
+            }
         </div>
     )
 }

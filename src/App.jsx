@@ -11,9 +11,11 @@ import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
-import ResetPassword from "./components/pages/ResetPassword";
-import ResetToken from './components/organisms/ResetToken'
-import AddOffers from "./components/pages/AddOffers";
+import SetPassword from "./components/pages/SetPassword";
+import SetToken from './components/organisms/setToken';
+import ChangePassword from './components/pages/ChangePassword'
+import ProfileFlyOut from "./components/organisms/ProfileFlyOut";
+import ForgottenPassword from "./components/pages/ForgottenPassword";
 
 
 export const axiosObject = axios.create({
@@ -25,13 +27,17 @@ export const axiosObject = axios.create({
 
 function App() {
   return (
+    <>
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/reset-password/:token" element={<ResetToken />}/>
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/set-password/:token" element={<SetToken path='login' />}/>
+        <Route path="/set-password" element={<SetPassword />} />
+        <Route path="/reset-password/:token" element={<SetToken path='reset-password'/>}/>
+        <Route path="/reset-password" element={<SetPassword />} />
+        <Route path="/forgotten-password" element={<ForgottenPassword />} />
         <Route element={<PrivateRoutes />}>
-
+        <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/" element={<Sidebar />} >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-product" element={<AddProduct />} />
@@ -42,7 +48,7 @@ function App() {
               <Route path=":id" element={<AddProduct />} />
             </Route>
             <Route path="/view-orders" element={<ViewOrders />} />
-            <Route path="/add-offers" element={<AddOffers />} />
+            {/* <Route path="/add-offers" element={<AddOffers />} /> */}
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />
@@ -58,12 +64,11 @@ function App() {
               </Route>
 
             </Route>
-
           </Route>
-
         </Route>
       </Routes>
     </Router>
+    </>
   );
 }
 

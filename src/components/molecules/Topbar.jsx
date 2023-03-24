@@ -11,11 +11,9 @@ import {
 } from 'reactstrap';
 import ImgTag from '../atoms/ImgTag';
 
-const Topbar = () => {
+const Topbar = ({setShowProfile}) => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggle = () => setIsOpen(!isOpen);
-
   let user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
 
   return (
@@ -28,7 +26,8 @@ const Topbar = () => {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
           </Nav>
-          <NavbarText color='light'>{user.firstName}</NavbarText>
+          <ImgTag className='profil-img' imgUrl='/assets/images/avtar.png' altText={'user profile'} onclick={setShowProfile}/>
+          {/* <NavbarText color='light'>{user.firstName}</NavbarText> */}
         </Collapse>
 
       </Navbar>

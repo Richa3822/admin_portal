@@ -45,6 +45,19 @@ function UserSellerDetails() {
 		cities: [],
 	});
 
+	function generatePassword(setFieldValue) {
+		let result = "";
+		const characters =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		const charactersLength = characters.length;
+		let counter = 0;
+		while (counter < 8) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			counter += 1;
+		}
+		setFieldValue("password", result);
+	}
+
 	useEffect(() => {
 		if (isEditUserMode) {
 			setStates("loader", true);
@@ -71,7 +84,6 @@ function UserSellerDetails() {
 			setStates("loader", false);
 		}
 	}, []);
-	console.log(" initial values = ", statesObject.initialValues);
 
 	const validation = Yup.object({
 		firstName: Yup.string().required("Required"),
@@ -79,14 +91,14 @@ function UserSellerDetails() {
 		emailId: Yup.string()
 			.email("please enter valid emailId ")
 			.required("Required"),
-		// password: Yup.string()
-		// 	.min(8, "Password must has 8 characters")
-		// 	.required("Required")
-		// 	.test("isEditUserMode", "Invalid Mode", (value) => {
-		// 		console.log("value password = ", value);
+		password: Yup.string()
+			.min(8, "Password must has 8 characters")
+			.required("Required")
+			.test("isEditUserMode", "Invalid Mode", (value) => {
+				console.log("value password = ", value);
 
-		// 		return true;
-		// 	}),
+				return true;
+			}),
 		// confirmPassword: Yup.string()
 		// 	.oneOf([Yup.ref("password"), null], "Passwords must match")
 		// 	.required("Required"),
@@ -416,7 +428,7 @@ function UserSellerDetails() {
 										</div>
 									</div>
 
-									{/* <div className="row">
+									<div className="row">
 										<div className="col-lg-6">
 											<InputBox
 												htmlFor="password"
@@ -427,18 +439,26 @@ function UserSellerDetails() {
 												inputClass="form-control"
 											/>
 										</div>
+										<Button
+											className="generate-btn"
+											type="button"
+											color="primary"
+											onClick={() => generatePassword(setFieldValue)}
+										>
+											generate password
+										</Button>
 
-										<div className="col-lg-6">
-											<InputBox
-												htmlFor="confirmPassword"
-												label="Confirm Password"
-												type="password"
-												name="confirmPassword"
-												placeholder="Enter Confirm Password"
-												inputClass="form-control"
-											/>
-										</div>
-									</div> */}
+										{/* <div className='col-lg-6'>
+                                            <InputBox
+                                                htmlFor="confirmPassword"
+                                                label="Confirm Password"
+                                                type="password"
+                                                name="confirmPassword"
+                                                placeholder="Enter Confirm Password"
+                                                inputClass="form-control"
+                                            />
+                                        </div>*/}
+									</div>
 
 									<div className="row">
 										<div className="col-lg-6">

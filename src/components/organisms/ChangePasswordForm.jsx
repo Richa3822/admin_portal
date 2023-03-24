@@ -8,7 +8,7 @@ import ImgTag from '../atoms/ImgTag'
 import { Formik, Form } from 'formik'
 import * as yup from 'yup';
 import { Link} from 'react-router-dom';
-import { updateData} from '../../services/Api';
+import { updateData } from '../../services/Api';
 import Loader from '../atoms/Loader';
 
 const initialValues = {
@@ -37,6 +37,7 @@ function Login() {
         updateData(`password/${id}`,data)
         .then((result) => {
                 setLoader(false);
+                console.log("result = ", result)
                 if (result.status) {
                     setMsg(result.message)
                         navigate('/');
@@ -45,6 +46,7 @@ function Login() {
                     setMsg(result.message)
                 }
             }).catch((error) => {
+                console.log("erro = ", error)
                 setLoader(false);
                 if (error.response) {
                     setMsg(error.response.data.message)
@@ -70,7 +72,7 @@ function Login() {
                             {
                                 msg && msg !== "login successfull!"
                                     ? <p className='text-danger'>{msg}</p>
-                                    : navigate('/')
+                                    : <></>
                             }
                         </div>
                         <br />

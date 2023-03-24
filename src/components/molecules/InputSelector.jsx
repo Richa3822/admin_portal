@@ -6,14 +6,14 @@ import InputLabel from '../atoms/InputLabel'
 
 
 
-const InputSelector = ({ htmlFor, label, name = "", options, onChange, defaultValue = { label: "Select", value: 0 } }) => {
+const InputSelector = ({ htmlFor, label, name = "", options, onChange, defaultValue = { label: "Select", value: 0 }, disabled = false }) => {
   return (
     <div className='form-group'>
       <InputLabel htmlFor={htmlFor} label={label} />
       {/* <Field name="role" > */}
         {/* {({ field }) => ( */}
 
-          <Select options={options} onChange={onChange} defaultValue={defaultValue} />
+          <Select options={options} onChange={onChange} defaultValue={defaultValue} isDisabled={disabled} />
         {/* ) */}
 
         {/* } */}

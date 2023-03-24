@@ -54,7 +54,7 @@ function Login() {
                     initialValues={initialValues} validationSchema={validationSchema} onSubmit={handlesubmit}>
                     <Form className="form-width">
                         <div className=" d-flex justify-content-between align-items-center">
-                            <div className="signup-logo">reset password</div>
+                            <div className="signup-logo">Set password</div>
                             <div className="website-logo d-flex justify-content-center align-items-center">
                                 <ImgTag className="w-100" imgUrl='/assets/images/logo1.png' altText='backgroud img' />
                             </div>

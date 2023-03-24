@@ -1,284 +1,454 @@
-import { Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { Button } from 'reactstrap';
-import { getData, saveData } from '../../services/Api';
-import InputBox from '../molecules/InputBox';
-import InputSelector from '../molecules/InputSelector';
-import * as Yup from 'yup';
-import Loader from '../atoms/Loader';
+import { Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { Button } from "reactstrap";
+import { axiosPut, getData, saveData } from "../../services/Api";
+import InputBox from "../molecules/InputBox";
+import InputSelector from "../molecules/InputSelector";
+import * as Yup from "yup";
+import Loader from "../atoms/Loader";
+import { isMongoId } from "../../services/services";
 
 function UserSellerDetails() {
-    const locationData = useLocation();
-    const [loader, setLoader] = useState(false)
-    const [countries, setCountry] = useState([])
-    const [selectedCountryId, setSelectedCountryId] = useState("")
+	const { id: userId } = useParams();
+	const locationData = useLocation();
 
-    const [states, setStates] = useState([]);
-    const [selectedStateId, setSelectedStateId] = useState("")
+	const isEditUserMode = isMongoId(userId);
 
-    const [cities, setCities] = useState([]);
+	const [statesObject, setStatesObject] = useState({
+		initialValues: {
+			firstName: "",
+			lastName: "",
+			emailId: "",
+			contactNumber: "",
+			role: "Select",
+			// password: "",
+			// confirmPassword: "",
+			address: {
+				name: "",
+				contactNumber: "",
+				pincode: "",
+				street: "",
+				locality: "",
+				city: "Select",
+				state: "Select",
+				country: "Select",
+			},
+			companyName: "",
+			rating: 0,
+		},
+		loader: true,
+		countries: [],
+		selectedCountryId: "",
+		states: [],
+		selectedStateId: "",
+		cities: [],
+	});
 
-    function generatePassword(setFieldValue) {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        let counter = 0;
-        while (counter < 8) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-          counter += 1;
-        }
-        setFieldValue('password',result);
-    }
-    const { firstName, lastName, emailId, contactNumber, role, address, companyName, rating } =
-        locationData?.state?.person
-            ?
-            locationData.state.person
-            :
-            {
-                firstName: "",
-                lastName: "",
-                emailId: "",
-                contactNumber: "",
-                role: "Select",
-                password: "",
-                address: {
-                    name: "",
-                    contactNumber: "",
-                    pincode: "",
-                    street: "",
-                    locality: "",
-                    city: "Select",
-                    state: "Select",
-                    country: "Select"
-                },
-                companyName: "",
-                rating: 0
-            }
+	function generatePassword(setFieldValue) {
+		let result = "";
+		const characters =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		const charactersLength = characters.length;
+		let counter = 0;
+		while (counter < 8) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength));
+			counter += 1;
+		}
+		setFieldValue("password", result);
+	}
 
-    const validation = Yup.object({
-        firstName: Yup.string().required('Required'),
-        lastName: Yup.string().required('Required'),
-        emailId: Yup.string().email("please enter valid emailId ").required('Required'),
-        password: Yup.string().min(8, "Password must has 8 characters").required("Required"),
-        // confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords must match").required("Required"),
-        contactNumber: Yup.string().matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number").required('Required'),
-        role: Yup.string().required('Required'),
+	useEffect(() => {
+		if (isEditUserMode) {
+			setStates("loader", true);
 
-        companyName: Yup.string().when('role', {
-            is: role => role === 'seller',
-            then: () => Yup.string().required("Required"),
-            otherwise: () => Yup.string()
-        }),
-        rating: Yup.string(),
+			getData(`user/${userId}`)
+				.then((data) => {
+					console.log("data = ", data.user);
+					const tempObj = {
+						...data.user,
+						address: data.user.sellerAdditionalData.address,
+						companyName: data.user.sellerAdditionalData.companyName,
+						rating: data.user.sellerAdditionalData.rating,
+					};
 
-        address: Yup.object().when('role', {
-            is: role => role === 'seller',
-            then: () => Yup.object({
-                name: Yup.string().required('Required'),
-                contactNumber: Yup.string().matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number").required('Required'),
-                pincode: Yup.string().matches(/^[0-9]{6}$/, "please enter valid pincode").required('Required'),
-                street: Yup.string().required('Required'),
-                locality: Yup.string().required('Required'),
-                city: Yup.string().required('Required'),
-                state: Yup.string().required('Required'),
-                country: Yup.string().required('Required')
-            }),
-            otherwise: () => Yup.object({
-                name: Yup.string(),
-                contactNumber: Yup.string(),
-                pincode: Yup.string(),
-                street: Yup.string(),
-                locality: Yup.string(),
-                city: Yup.string(),
-                state: Yup.string(),
-                country: Yup.string(),
-            })
-        }),
-    })
+					if (data.status) {
+						setObject("initialValues", tempObj);
+					}
+					setStates("loader", false);
+				})
+				.catch((err) => {
+					console.log("err = ", err);
+				});
+		} else {
+			setStates("loader", false);
+		}
+	}, []);
 
-    const initialValues = {
-        firstName: firstName,
-        lastName: lastName,
-        emailId: emailId,
-        contactNumber: contactNumber,
-        role: role,
-        password: "",
-        // confirmPassword: "",
-        address: address,
-        companyName: companyName,
-        rating: rating
-    }
+	const validation = Yup.object({
+		firstName: Yup.string().required("Required"),
+		lastName: Yup.string().required("Required"),
+		emailId: Yup.string()
+			.email("please enter valid emailId ")
+			.required("Required"),
+		password: Yup.string()
+			.min(8, "Password must has 8 characters")
+			.required("Required")
+			.test("isEditUserMode", "Invalid Mode", (value) => {
+				console.log("value password = ", value);
 
-    const roles = [
-        { value: "admin", label: "admin" },
-        { value: "seller", label: "seller" },
-        { value: "user", label: "user" }
-    ]
+				return true;
+			}),
+		// confirmPassword: Yup.string()
+		// 	.oneOf([Yup.ref("password"), null], "Passwords must match")
+		// 	.required("Required"),
+		contactNumber: Yup.string()
+			.matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number")
+			.required("Required"),
+		role: Yup.string().required("Required"),
 
+		companyName: Yup.string().when("role", {
+			is: (role) => role === "seller",
+			then: () => Yup.string().required("Required"),
+			otherwise: () => Yup.string(),
+		}),
+		rating: Yup.string(),
 
+		address: Yup.object().when("role", {
+			is: (role) => role === "seller",
+			then: () =>
+				Yup.object({
+					name: Yup.string().required("Required"),
+					contactNumber: Yup.string()
+						.matches(/^[6-9]{1}[0-9]{9}$/, "please enter valid phone number")
+						.required("Required"),
+					pincode: Yup.string()
+						.matches(/^[0-9]{6}$/, "please enter valid pincode")
+						.required("Required"),
+					street: Yup.string().required("Required"),
+					locality: Yup.string().required("Required"),
+					city: Yup.string().required("Required"),
+					state: Yup.string().required("Required"),
+					country: Yup.string().required("Required"),
+				}),
+			otherwise: () =>
+				Yup.object({
+					name: Yup.string(),
+					contactNumber: Yup.string(),
+					pincode: Yup.string(),
+					street: Yup.string(),
+					locality: Yup.string(),
+					city: Yup.string(),
+					state: Yup.string(),
+					country: Yup.string(),
+				}),
+		}),
+	});
 
-    useEffect(() => {
-        async function fetchCountries() {
-            const data = await getData("address/countries")
-            setData(data.data, setCountry);
-        }
-        fetchCountries()
-    }, [])
+	const roles = [
+		{ value: "admin", label: "admin" },
+		{ value: "seller", label: "seller" },
+		{ value: "user", label: "user" },
+	];
 
+	useEffect(() => {
+		async function fetchCountries() {
+			const data = await getData("address/countries");
+			setData(data.data, "countries");
+		}
 
-    useEffect(() => {
+		fetchCountries();
+	}, []);
 
-        if (selectedCountryId !== "") {
-            async function fetchStates() {
-                const data = await getData(`address/states/${selectedCountryId}`)
-                setStates([]);
-                setData(data.data, setStates);
-            }
+	useEffect(() => {
+		if (statesObject.selectedCountryId !== "") {
+			async function fetchStates() {
+				const data = await getData(
+					`address/states/${statesObject.selectedCountryId}`
+				);
+				setStates("states", []);
+				setData(data.data, "states");
+			}
 
-            fetchStates()
-        }
-    }, [selectedCountryId])
+			fetchStates();
+		}
+	}, [statesObject.selectedCountryId]);
 
-    useEffect(() => {
-        if (selectedStateId !== "") {
-            async function fetchStates() {
-                const data = await getData(`address/cities/${selectedStateId}`)
-                setCities([]);
-                setData(data.data, setCities);
-            }
+	useEffect(() => {
+		if (statesObject.selectedStateId !== "") {
+			async function fetchStates() {
+				const data = await getData(
+					`address/cities/${statesObject.selectedStateId}`
+				);
+				setStates("cities", []);
+				setData(data.data, "cities");
+			}
 
-            fetchStates()
-        }
-    }, [selectedStateId])
+			fetchStates();
+		}
+	}, [statesObject.selectedStateId]);
 
+	function setData(data, key) {
+		data?.map((value) => {
+			setStatesObject((prevStates) => {
+				return {
+					...prevStates,
+					[key]: [
+						...prevStates[key],
+						{ id: value.id, label: value.name, value: value.name },
+					],
+				};
+			});
+		});
+	}
 
-    function setData(data, setState) {
-        data?.map(value => {
-            setState(prevCountries => [...prevCountries, { id: value.id, label: value.name, value: value.name }])
-        })
-    }
+	function setObject(stateKey, data) {
+		Object.keys(data).map((key) => {
+			setStatesObject((prevStates) => {
+				return {
+					...prevStates,
+					[stateKey]: { ...prevStates[stateKey], [key]: data[key] },
+				};
+			});
+		});
+	}
 
-    return (
-        <div>
+	function setStates(key, value) {
+		setStatesObject((prevStates) => {
+			return { ...prevStates, [key]: value };
+		});
+	}
 
+	const handleSubmit = async (e, values) => {
+		e.preventDefault();
 
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validation}
-                enableReinitialize={true}
-                onSubmit={(values, { resetForm, setFieldValue }) => {
+		validation
+			.validate(values)
+			.then(async (res) => {
+				const tempObj = { ...values, address: { ...values.address } };
+				delete tempObj.confirmPassword;
+				setStates("loader", true);
+				console.log("temp = ", tempObj);
 
-                    const tempObj = { ...values, address: { ...values.address } }
-                    delete tempObj.confirmPassword
+				if (!isEditUserMode) {
+					try {
+						const data = await saveData("user", tempObj);
+						console.log(" data = ", data);
+						setStates("loader", false);
+						if (data.status) {
+							alert(data.message);
+							e.target.reset();
+						} else {
+							alert(data.message);
+						}
+					} catch (e) {
+						setStates("loader", false);
+						alert(e.message);
+					}
+				} else {
+					try {
+						console.log("user = ", tempObj);
+						const data = await axiosPut(`user/${userId}`, tempObj);
 
-                    async function createUser() {
-                        try {
-                            const data = await saveData('user', tempObj)
-                            
-                            setLoader(false);
-                            if (data.status) {
-                                alert(data.message)
-                                resetForm();
-                            }
-                            else {
-                                alert(data.message)
-                            }
-                        } catch (e) {
-                            setLoader(false);
-                            alert(e.message)
-                        }
-                    }
-                    setLoader(true);
-                    createUser();
+						setStates("loader", false);
+						if (data.status) {
+							alert(data.message);
+							e.target.reset();
+						} else {
+							alert(data.message);
+						}
+					} catch (e) {
+						setStates("loader", false);
+						alert(e.message);
+					}
+				}
+			})
+			.catch((e) => {
+				console.log("e = ", e);
+				setStates("loader", false);
+				alert(e.message);
+			});
 
-                }}
-            >
-                {
-                    ({ values, setFieldValue }) => {
-                        return (
-                            <>
-                                {
-                                    loader
-                                        ?
-                                        <Loader />
-                                        :
-                                        null
-                                }
-                                
-                                <Form>
+		// const tempObj = { ...values, address: { ...values.address } };
+		// delete tempObj.confirmPassword;
+		// console.log(" = ", values);
+		// async function createUser() {
+		// 	try {
+		// 		const data = await saveData("user", tempObj);
+		// 		console.log(" data = ", data);
+		// 		setStates("loader", false);
+		// 		if (data.status) {
+		// 			alert(data.message);
+		// 			resetForm();
+		// 		} else {
+		// 			alert(data.message);
+		// 		}
+		// 	} catch (e) {
+		// 		setStates("loader", false);
+		// 		alert(e.message);
+		// 	}
+		// }
 
-                                    <div className='row'>
-                                        <div className='col-lg-6'>
-                                            <InputBox
-                                                htmlFor="firstName"
-                                                label="First Name"
-                                                type="text"
-                                                name="firstName"
-                                                placeholder="Enter first name"
-                                                inputClass="form-control"
-                                            />
-                                        </div>
+		// async function updateUser() {
+		// 	try {
+		// 		console.log("user = ", tempObj);
+		// 		const data = await axiosPut(`user/${userId}`, tempObj);
 
+		// 		setStates("loader", false);
+		// 		if (data.status) {
+		// 			alert(data.message);
+		// 			resetForm();
+		// 		} else {
+		// 			alert(data.message);
+		// 		}
+		// 	} catch (e) {
+		// 		setStates("loader", false);
+		// 		alert(e.message);
+		// 	}
+		// }
 
-                                        <div className='col-lg-6'>
-                                            <InputBox
-                                                htmlFor="lastName"
-                                                label="Last Name"
-                                                type="text"
-                                                name="lastName"
-                                                placeholder="Enter last name"
-                                                inputClass="form-control"
-                                            />
-                                        </div>
-                                    </div>
+		// setStates("loader", true);
+		// if (isEditUserMode) {
+		// 	updateUser();
+		// } else {
+		// 	console.log("create");
+		// 	createUser();
+		// }
+	};
 
-                                    <div className='row'>
-                                        <div className='col-lg-6'>
-                                            <InputBox
-                                                htmlFor="contactNumber"
-                                                label="Contact Number"
-                                                type="text"
-                                                name="contactNumber"
-                                                placeholder="Enter contact Number"
-                                                inputClass="form-control"
-                                            />
-                                        </div>
+	return (
+		<div>
+			{statesObject.loader ? (
+				<Loader />
+			) : (
+				<Formik
+					initialValues={statesObject.initialValues}
+					validationSchema={validation}
+					// enableReinitialize={true}
+					onSubmit={(values, { resetForm }) => {
+						const tempObj = { ...values, address: { ...values.address } };
+						delete tempObj.confirmPassword;
+						console.log(" = ", values);
+						async function createUser() {
+							try {
+								const data = await saveData("user", tempObj);
+								console.log(" data = ", data);
+								setStates("loader", false);
+								if (data.status) {
+									alert(data.message);
+									resetForm();
+								} else {
+									alert(data.message);
+								}
+							} catch (e) {
+								setStates("loader", false);
+								alert(e.message);
+							}
+						}
 
+						async function updateUser() {
+							try {
+								console.log("user = ", tempObj);
+								const data = await axiosPut(`user/${userId}`, tempObj);
 
-                                        <div className='col-lg-6'>
-                                            <InputBox
-                                                htmlFor="emailId"
-                                                label="Email"
-                                                type="text"
-                                                name="emailId"
-                                                placeholder="Enter emailId"
-                                                inputClass="form-control"
-                                            />
-                                        </div>
-                                    </div>
+								setStates("loader", false);
+								if (data.status) {
+									alert(data.message);
+									resetForm();
+								} else {
+									alert(data.message);
+								}
+							} catch (e) {
+								setStates("loader", false);
+								alert(e.message);
+							}
+						}
 
-                                     <div className='row'>
-                                        <div className='col-lg-6'>
-                                            <InputBox
-                                                htmlFor="password"
-                                                label="Password"
-                                                type="password"
-                                                name="password"
-                                                placeholder="Enter Password"
-                                                inputClass="form-control"
-                                            />
-                                        </div>
-                                        <Button
-                                        className='generate-btn'
-                                        type="button"
-                                        color='primary'
-                                        onClick={()=>generatePassword(setFieldValue)}
-                                    >
-                                        generate password
-                                    </Button>
+						setStates("loader", true);
+						if (isEditUserMode) {
+							updateUser();
+						} else {
+							console.log("create");
+							createUser();
+						}
+					}}
+				>
+					{({ values, setFieldValue }) => {
+						console.log(values);
+						return (
+							<>
+								{statesObject.loader ? <Loader /> : null}
 
-                                       {/* <div className='col-lg-6'>
+								<Form>
+									<div className="row">
+										<div className="col-lg-6">
+											<InputBox
+												htmlFor="firstName"
+												label="First Name"
+												type="text"
+												name="firstName"
+												placeholder="Enter first name"
+												inputClass="form-control"
+											/>
+										</div>
+
+										<div className="col-lg-6">
+											<InputBox
+												htmlFor="lastName"
+												label="Last Name"
+												type="text"
+												name="lastName"
+												placeholder="Enter last name"
+												inputClass="form-control"
+											/>
+										</div>
+									</div>
+
+									<div className="row">
+										<div className="col-lg-6">
+											<InputBox
+												htmlFor="contactNumber"
+												label="Contact Number"
+												type="text"
+												name="contactNumber"
+												placeholder="Enter contact Number"
+												inputClass="form-control"
+											/>
+										</div>
+
+										<div className="col-lg-6">
+											<InputBox
+												htmlFor="emailId"
+												label="Email"
+												type="text"
+												name="emailId"
+												placeholder="Enter emailId"
+												inputClass="form-control"
+											/>
+										</div>
+									</div>
+
+									<div className="row">
+										<div className="col-lg-6">
+											<InputBox
+												htmlFor="password"
+												label="Password"
+												type="password"
+												name="password"
+												placeholder="Enter Password"
+												inputClass="form-control"
+											/>
+										</div>
+										<Button
+											className="generate-btn"
+											type="button"
+											color="primary"
+											onClick={() => generatePassword(setFieldValue)}
+										>
+											generate password
+										</Button>
+
+										{/* <div className='col-lg-6'>
                                             <InputBox
                                                 htmlFor="confirmPassword"
                                                 label="Confirm Password"
@@ -288,170 +458,183 @@ function UserSellerDetails() {
                                                 inputClass="form-control"
                                             />
                                         </div>*/}
-                                    </div> 
+									</div>
 
-                                    <div className='row'>
-                                        <div className='col-lg-6'>
-                                            <InputSelector
-                                                defaultValue={{ label: values.role, value: values.role }}
-                                                options={roles}
-                                                onChange={option => setFieldValue("role", option.value)}
-                                                label="Role"
-                                                htmlFor="role"
-                                                name="role"
-                                                value={values.role}
-                                            />
-                                        </div>
-                                    </div>
+									<div className="row">
+										<div className="col-lg-6">
+											<InputSelector
+												defaultValue={{
+													label: values.role,
+													value: values.role,
+												}}
+												options={roles}
+												onChange={(option) =>
+													setFieldValue("role", option.value)
+												}
+												label="Role"
+												htmlFor="role"
+												name="role"
+												value={values.role}
+											/>
+										</div>
+									</div>
 
-                                    {
+									{values.role == "seller" ? (
+										<div>
+											<div className="row">
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="companyName"
+														label="Company Name"
+														type="text"
+														name="companyName"
+														placeholder="Enter company name"
+														inputClass="form-control"
+													/>
+												</div>
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="rating"
+														label="Rating"
+														type="text"
+														name="rating"
+														placeholder="Enter rating"
+														inputClass="form-control"
+														disabled={true}
+													/>
+												</div>
+											</div>
 
-                                        values.role == "seller"
-                                            ?
-                                            <div>
-                                                <div className='row'>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="companyName"
-                                                            label="Company Name"
-                                                            type="text"
-                                                            name="companyName"
-                                                            placeholder="Enter company name"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="rating"
-                                                            label="Rating"
-                                                            type="text"
-                                                            name="rating"
-                                                            placeholder="Enter rating"
-                                                            inputClass="form-control"
-                                                            disabled={true}
-                                                        />
+											<h5 className="my-3">Address of Warehouse</h5>
 
-                                                    </div>
-                                                </div>
+											<div className="row">
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="name"
+														label="Name"
+														type="text"
+														name="address.name"
+														placeholder="Enter name"
+														inputClass="form-control"
+													/>
+												</div>
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="contactNumber"
+														label="Contact Number"
+														type="text"
+														name="address.contactNumber"
+														placeholder="Enter contact number"
+														inputClass="form-control"
+													/>
+												</div>
+											</div>
+											<div className="row">
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="pincode"
+														label="Pincode"
+														type="text"
+														name="address.pincode"
+														placeholder="Enter pincode"
+														inputClass="form-control"
+													/>
+												</div>
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="street"
+														label="Street"
+														type="text"
+														name="address.street"
+														placeholder="Enter street"
+														inputClass="form-control"
+													/>
+												</div>
+											</div>
+											<div className="row">
+												<div className="col-lg-6">
+													<InputBox
+														htmlFor="locality"
+														label="Locality"
+														type="text"
+														name="address.locality"
+														placeholder="Enter locality"
+														inputClass="form-control"
+													/>
+												</div>
+											</div>
+											<div className="row">
+												<div className="col-lg-4">
+													<InputSelector
+														defaultValue={{
+															label: values.address.country,
+															value: values.address.country,
+														}}
+														options={statesObject.countries}
+														onChange={(option) => {
+															// setSelectedCountryId(option.id);
+															setStates("selectedCountryId", option.id);
+															setFieldValue("address.country", option.value);
+														}}
+														label="Country"
+														htmlFor="country"
+														value={values.address.country}
+													/>
+												</div>
+												<div className="col-lg-4">
+													<InputSelector
+														defaultValue={{
+															label: values.address.state,
+															value: values.address.state,
+														}}
+														options={statesObject.states}
+														onChange={(option) => {
+															// setSelectedStateId(option.id);
+															setStates("selectedStateId", option.id);
+															setFieldValue("address.state", option.value);
+														}}
+														label="State"
+														htmlFor="state"
+														value={values.address.state}
+													/>
+												</div>
+												<div className="col-lg-4">
+													<InputSelector
+														defaultValue={{
+															label: values.address.city,
+															value: values.address.city,
+														}}
+														options={statesObject.cities}
+														onChange={(option) => {
+															setFieldValue("address.city", option.value);
+														}}
+														label="City"
+														htmlFor="city"
+														value={values.address.city}
+													/>
+												</div>
+											</div>
+										</div>
+									) : null}
 
-                                                <h5 className='my-3' >Address of Warehouse</h5>
-
-                                                <div className='row'>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="name"
-                                                            label="Name"
-                                                            type="text"
-                                                            name="address.name"
-                                                            placeholder="Enter name"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="contactNumber"
-                                                            label="Contact Number"
-                                                            type="text"
-                                                            name="address.contactNumber"
-                                                            placeholder="Enter contact number"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className='row'>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="pincode"
-                                                            label="Pincode"
-                                                            type="text"
-                                                            name="address.pincode"
-                                                            placeholder="Enter pincode"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="street"
-                                                            label="Street"
-                                                            type="text"
-                                                            name="address.street"
-                                                            placeholder="Enter street"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className='row'>
-                                                    <div className='col-lg-6'>
-                                                        <InputBox
-                                                            htmlFor="locality"
-                                                            label="Locality"
-                                                            type="text"
-                                                            name="address.locality"
-                                                            placeholder="Enter locality"
-                                                            inputClass="form-control"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className='row'>
-                                                    <div className='col-lg-4'>
-                                                        <InputSelector
-                                                            defaultValue={{ label: values.address.country, value: values.address.country }}
-                                                            options={countries}
-                                                            onChange={option => {
-                                                                setSelectedCountryId(option.id);
-                                                                setFieldValue("address.country", option.value)
-                                                            }}
-                                                            label="Country"
-                                                            htmlFor="country"
-                                                            value={values.address.country}
-                                                        />
-                                                    </div>
-                                                    <div className='col-lg-4'>
-                                                        <InputSelector
-                                                            defaultValue={{ label: values.address.state, value: values.address.state }}
-                                                            options={states}
-                                                            onChange={option => {
-                                                                setSelectedStateId(option.id);
-                                                                setFieldValue("address.state", option.value)
-                                                            }}
-                                                            label="State"
-                                                            htmlFor="state"
-                                                            value={values.address.state}
-                                                        />
-                                                    </div>
-                                                    <div className='col-lg-4'>
-                                                        <InputSelector
-                                                            defaultValue={{ label: values.address.city, value: values.address.city }}
-                                                            options={cities}
-                                                            onChange={option => {
-                                                                setFieldValue("address.city", option.value)
-                                                            }}
-                                                            label="City"
-                                                            htmlFor="city"
-                                                            value={values.address.city}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            :
-                                            null
-                                    }
-
-                                    <Button
-                                        className='mt-3'
-                                        type="submit"
-                                        color='primary'
-                                    >
-                                        {locationData.pathname === "/add-user-seller" ? `Add ${values.role !== "Select" ? values.role : ""}` : "Update"}
-                                    </Button>
-                                </Form>
-                            </>
-                        )
-                    }
-                }
-            </Formik>
-        </div>
-    )
+									<Button
+										className="mt-3"
+										type="submit"
+										color="primary"
+										// onClick={(e) => handleSubmit(e, values)}
+									>
+										{locationData.pathname === "/add-user-seller"
+											? `Add ${values.role !== "Select" ? values.role : ""}`
+											: "Update"}
+									</Button>
+								</Form>
+							</>
+						);
+					}}
+				</Formik>
+			)}
+		</div>
+	);
 }
 
-export default UserSellerDetails
+export default UserSellerDetails;

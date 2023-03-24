@@ -19,7 +19,7 @@ import ForgottenPassword from "./components/pages/ForgottenPassword";
 
 
 export const axiosObject = axios.create({
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: 'http://localhost:4001/api/',
   headers: {
     "Access-Control-Allow-Origin": "*"
   }
@@ -43,15 +43,26 @@ function App() {
             <Route path="/add-product" element={<AddProduct />} />
 
 
-            <Route path="/view-products" element={<ViewProduct />} />
+            <Route path="/view-products" >
+              <Route path="" element={<ViewProduct />} />
+              <Route path=":id" element={<AddProduct />} />
+            </Route>
             <Route path="/view-orders" element={<ViewOrders />} />
-            <Route path="/add-offers" element={<AddOffers />} />
+            {/* <Route path="/add-offers" element={<AddOffers />} /> */}
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />
-              <Route path="/view-users" element={<ViewUsers />} />
-              <Route path="/view-sellers" element={<ViewSellers />} />
-              <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
+
+              <Route path="/view-users" >
+                <Route path="" element={<ViewUsers />} />
+                <Route path=":id" element={<ViewUserSellerDetails />} />
+              </Route>
+
+              <Route path="/view-sellers" >
+                <Route path="" element={<ViewSellers />} />
+                <Route path=":id" element={<ViewUserSellerDetails />} />
+              </Route>
+
             </Route>
           </Route>
         </Route>

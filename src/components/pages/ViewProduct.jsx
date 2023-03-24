@@ -14,26 +14,28 @@ const ViewProduct = () => {
     let timer = useRef();
 
     const [data, setData] = useState([]);
-    const [isLoad, setIsLoad] = useState(false);
+    const [isLoad, setIsLoad] = useState(true);
 
     const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
 
     useEffect(() => {
         const getFilteredData = () => {
             clearTimeout(timer.current)
-            setIsLoad(false)
+            setIsLoad(true)
             timer.current = setTimeout(async () => {
                 try {
                     const url = `product/?isAdminSide=true&search=${search}&page=${page}&limit=${LIMIT}&sellerId=${user?.role === 'seller' ? user?._id : ""}`;
 
                     const res = await getData(url)
 
+                    console.log("p = ", res)
                     setData(res.products);
                     setTotalProducts(res.count)
-                    setIsLoad(true)
-
+                    setIsLoad(false)
+                    
                 } catch (e) {
                     alert("error occur, please reload again")
+                    setIsLoad(false)
                 }
             }, WAITING_TIMING)
         }
@@ -44,12 +46,10 @@ const ViewProduct = () => {
 
     const handleChange = (e) => {
         setSearch(e.target.value)
-        setData([])
         setPage(1)
     }
 
     const handlePageClick = (e) => {
-        setData([])
         setPage(e.selected + 1)
     }
 
@@ -71,9 +71,9 @@ const ViewProduct = () => {
                 {
                     isLoad
                         ?
-                        <TableDesign data={data} setData={setData} setDeletedId={setDeletedId} />
-                        :
                         <Loader />
+                        :
+                        <TableDesign data={data} page={page - 1} setDeletedId={setDeletedId} />
                 }
             </div>
 

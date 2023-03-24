@@ -7,7 +7,7 @@ function AddUserSeller() {
             <div className="card ">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 ><strong>Add User or Seller</strong></h5>
+                        <h5 ><strong>Add User/Seller/Admin</strong></h5>
                     </div>
                 </div>
 

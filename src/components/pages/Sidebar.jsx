@@ -26,6 +26,7 @@ const Sidebar = () => {
                     <Link to='/add-product'><List name='Add Products' /></Link>
                     <Link to='/view-products'><List name='View Products' /></Link>
                     <Link to='/view-orders'><List name='View Orders' /></Link>
+                    <Link to='/add-offers'><List name='Add offers'/></Link>
 
                     {
                         user.role === "admin"

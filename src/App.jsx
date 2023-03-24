@@ -45,6 +45,7 @@ function App() {
 
             <Route path="/view-products" element={<ViewProduct />} />
             <Route path="/view-orders" element={<ViewOrders />} />
+            <Route path="/add-offers" element={<AddOffers />} />
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />

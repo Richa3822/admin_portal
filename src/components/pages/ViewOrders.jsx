@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import Button, { ButtonType } from '../atoms/Button'
 import OrderTable from '../atoms/OrderTable'
-import axios from 'axios'
 import InputSelector from '../molecules/InputSelector'
-import OrderNavbar from '../molecules/OrderNavbar'
 import Pagination from "../molecules/Pagination";
 import { Formik } from 'formik'
-const ViewOrders = ({ }) => {
+import Card from "../atoms/Card"
+import {FetchOrders}from "../../services/Order"
+import { ORDER_URL } from '../../constants/Constant';
+
+const ViewOrders = () => {
+  
     const [data, setData] = useState([])
     const [orderscount, setOrdersCount] = useState(0);
- 
-    const [initialValues,setInitialValues]= useState({
-        status:"all"
+    const [initialValues, setInitialValues] = useState({
+        status: "all"
     });
-    const [temp,setTemp]= useState()
+    const [filter, setFilter] = useState()
     const options = [
-        {value:"all",label:"All"},
+        { value: "all", label: "All" },
         { value: "pending", label: "Pending" },
         { value: "hold", label: "Hold" },
         { value: "shipped", label: "Shipped" },
@@ -23,46 +24,42 @@ const ViewOrders = ({ }) => {
         { value: "cancelled", label: "Cancelled" },
         { value: "deleted", label: "Deleted" }
     ];
-
-   
-
-
-
     useEffect(() => {
-        fetchData("http://localhost:4000/api/order/admin")
-    }, [temp]);
+        fetchData(ORDER_URL,10)
+    }, [filter]);
 
-    async function fetchData(url) {
-        
-        if(temp === "all"){
-            setTemp(null);
+
+    async function fetchData(url,limit) {
+        if (filter === "deleted") {
+            let response =await FetchOrders(url,{ params: { limit: limit, status: filter } })
+            setData(response.data.details);
+            setOrdersCount(response.data.count);
+            return;
         }
-        let response = await axios.get(url, { params: { limit: 10,status:temp } })
-        setData(response.data.details);
-        setOrdersCount(response.data.count);
-        console.log(response.data);
-    }
-
-    const handlePageClick = (e) => {
-        console.log(e)
+        if (filter === "all") {
+            setFilter(null);
+        }
+        else{
+        let response =await FetchOrders(url, { params: { limit: limit, status: filter } })
+        let orders = response.data.details;
+        let notDeletedOrders = orders.filter((order) => {
+            if (order.status !== 'deleted') {
+                return order;
+            }
+        })
+        setData(notDeletedOrders);
+        setOrdersCount(notDeletedOrders.length);
+        }
     }
 
     return (
         <div className='mt-2 rounded border'>
-            <div className="card">
-                <div className="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5>
-                            <strong> Update Order</strong>
-                        </h5>
-                    </div>
-                </div>
-            </div>
+           <Card heading="Update Order"/>
             <div className='row ml-1'>
                 <div className='col-2'>
                     <Formik initialValues={initialValues}>
                         {
-                            ({values,setFieldValue}) => {
+                            ({ values, setFieldValue }) => {
                                 {
                                     console.log(values);
                                 }
@@ -72,10 +69,10 @@ const ViewOrders = ({ }) => {
                                     name="status"
                                     onChange={(option) => {
                                         setFieldValue('status', option.value)
-                                        setTemp(option.value);
+                                        setFilter(option.value);
                                     }}
                                     defaultValue={{ value: values.status, label: `${values.status.charAt(0).toUpperCase() + values.status.slice(1)}` }}
-                                    
+
                                 />
 
                             }
@@ -85,12 +82,9 @@ const ViewOrders = ({ }) => {
 
                 </div>
             </div>
-
-            {/* <OrderNavbar /> */}
-            {/* <hr /> */}
-            <div className='mt-3 mb-3 ml-2' >Total Orders  = {orderscount}</div>
+            <div className='mt-3 mb-3 ml-3 pl-1' >Total Orders  = {orderscount}</div>
             <div className='d-flex justify-content-around align-items-center'>
-                <OrderTable data={data} setData={setData} />
+                <OrderTable data={data} changeData= {(value)=>setData(value)} />
             </div>
             <Pagination totalCount={100} limit={10} />
         </div>

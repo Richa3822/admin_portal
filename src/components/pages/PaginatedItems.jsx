@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { PAGES_COUNT } from '../../constants/Constant';
 
 const PaginatedItems = ({ordersPerPage}) => {
     const orders = [];

@@ -13,11 +13,6 @@ import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
 import UpdateOrder from "./components/pages/UpdateOrder";
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-
-
-
 
 export const axiosObject = axios.create({
   baseURL: 'http://localhost:4000/api/',
@@ -47,7 +42,7 @@ function App() {
               <Route path="/view-users" element={<ViewUsers />} />
               <Route path="/view-sellers" element={<ViewSellers />} />
               <Route path="/view-user/:id" element={<ViewUserSellerDetails />} />
-              <Route path="/update-order" element={<UpdateOrder/>}></Route>
+              <Route path="/update-order" element={<UpdateOrder />}></Route>
             </Route>
 
           </Route>
@@ -55,12 +50,6 @@ function App() {
         </Route>
       </Routes>
     </Router>
-    // <Example/>
-    
-
-
-
-
   );
 }
 

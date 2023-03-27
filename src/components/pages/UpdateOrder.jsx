@@ -17,10 +17,10 @@ function UpdateOrder() {
   let [showLoader, setShowLoader] = useState(true)
   let [initialValues, setInitialValues] = useState(
     {
-      _Id: "", 
-      paymentId: "", 
-      status: "select...", 
-      orderDate: "", 
+      _Id: "",
+      paymentId: "",
+      status: "select...",
+      orderDate: "",
       deliveryDate: ""
     });
 
@@ -50,7 +50,6 @@ function UpdateOrder() {
     const updatedOrder = await axios.patch("http://localhost:4000/api/order", values, { headers: { Accept: "application/json", 'Content-Type': "application/json" } });
     setShowLoader(false)
     navigate('/view-orders')
-    // console.log(updatedOrder);
   }
 
   async function fetchData(orderId) {
@@ -63,7 +62,6 @@ function UpdateOrder() {
     setShowLoader(false);
   }
   useEffect(() => {
-    // console.log("ori = ", initialValues)
     if (!initialValues.paymentId) {
       fetchData(orderId)
     }
@@ -73,7 +71,7 @@ function UpdateOrder() {
   return (
     <div className="container-fluid">
       <div className="update-order">
-        <Card heading="Update Order"/>
+        <Card heading="Update Order" />
         {
           showLoader
             ?
@@ -88,7 +86,6 @@ function UpdateOrder() {
                 return (
                   <Form className="mt-3 ml-3 mr-3"  >
                     <div className="row">
-                      {/* <div className="col-1"></div> */}
                       <div className="col-6">
                         <InputBox
                           label="Order ID"
@@ -116,11 +113,7 @@ function UpdateOrder() {
                         />
                       </div>
                     </div>
-                    {/* <div className="row">
-                      
-                    </div> */}
                     <div className="row">
-                      {/* <div className="col-1"></div> */}
                       <div className="col-6">
                         <InputSelector
                           options={options}
@@ -134,7 +127,7 @@ function UpdateOrder() {
                           defaultValue={{ value: values.status, label: `${values.status.charAt(0).toUpperCase() + values.status.slice(1)}` }}
                         />
                       </div>
-                      {/* <div className="col-1"></div> */}
+                      
                       <div className="col-6">
                         <InputBox
                           label="Order Date"
@@ -148,9 +141,6 @@ function UpdateOrder() {
                         />
                       </div>
                     </div>
-                    {/* <div className="row">
-                     
-                    </div> */}
                     <div className="row">
                       <div className="col-3"></div>
                       <div className="col-6">

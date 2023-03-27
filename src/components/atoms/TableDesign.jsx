@@ -94,7 +94,7 @@ const TableDesign = ({ data, setData, setDeletedId }) => {
             </Table>
             
 
-            <DeleteConfirmation open={open} confirmation={confirmation} toggle={toggle} />
+            <DeleteConfirmation open={open} confirmation={confirmation} toggle={toggle} title="Delete Product"/>
 
         </>
     );

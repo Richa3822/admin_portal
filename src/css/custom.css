@@ -185,3 +185,62 @@ tr th {
 .update-order-button:hover{
     color:black;
 }
+
+
+/* reset password page*/
+.reset-form {
+    width: 600px;
+    margin: 70px auto;
+    font-size: 16px;
+    padding: 20px;
+}
+  .reset-form-header {
+    background: white;
+    padding: 20px;
+    font-size: 1.4em;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #000;
+  }
+  .reset-form-container {
+    background: white;
+    padding: 20px;
+  }
+ .reset-pwd-button{
+    background: #28d;
+    border-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.4em;
+    font-weight: normal;
+    text-align: center;
+    margin-top: 25px;
+  }
+  .reset-pwd-button:hover {
+    background: #17c;
+    outline: none;
+  }
+
+  .generate-btn{
+    height: 2.3rem;
+    margin-top: 1.9rem;
+  }
+
+  .profil-img{
+    height: 4rem;
+    width:4rem;
+    border-radius: 50%;
+  }
+  .profile-fly-out{
+    width: 20rem;
+    border: 2px solid rgb(202, 199, 199);
+    background-color: white;
+    position: absolute;
+    z-index: 1;
+    top:4.7rem;
+    right: 1rem;
+  }
+  .profile-option{
+    font-size: 1.3rem;
+  }

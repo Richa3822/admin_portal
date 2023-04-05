@@ -1,22 +1,31 @@
-import React, { useState,useCallback,useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from 'react-dropzone';
-import { FaCloudDownloadAlt,FaTrashAlt } from 'react-icons/fa';
-import {saveData} from '../../services/Api'
+import { FaCloudDownloadAlt, FaTrashAlt } from 'react-icons/fa';
+import { saveData } from '../../services/Api'
+import { getValueFromObjectByKey } from "../../services/Objects";
 
 UploadImgs.defaultProps = {
   multiple: false,
   maxFiles: null,
   accept: "image/*",
-  onChange: () => {},
+  onChange: () => { },
 };
 
 function UploadImgs({ field, form, ...props }) {
-  const {multiple, maxFiles ,accept} = props;
-  const {setFieldValue} = form;
+  const { multiple, maxFiles, accept } = props;
+  console.log("field = ", field.name, ", form value = ", form.values, " m = ", multiple)
+  const { setFieldValue } = form;
   const [isDragActive, setIsDragActive] = useState(false);
-  const [urls, setUrls] = useState([]);
-  
-  
+
+  const [urls, setUrls] = useState(
+    multiple
+      ?
+      [...getValueFromObjectByKey(form.values, field.name, [])]
+      :
+      [getValueFromObjectByKey(form.values, field.name, '')]
+  );
+
+
   const onDragEnter = useCallback(() => {
     setIsDragActive(true);
   }, []);
@@ -25,7 +34,7 @@ function UploadImgs({ field, form, ...props }) {
     setIsDragActive(false);
   }, []);
 
-  
+
   const handleFileChange = async (files) => {
     if (maxFiles && files.length > maxFiles) {
       alert(`You can select a maximum of ${maxFiles} files.`);
@@ -35,13 +44,13 @@ function UploadImgs({ field, form, ...props }) {
     for (let i = 0; i < files.length; i++) {
       formData.append('images', files[i]);
     }
-     
-      await saveData('imageUpload', formData)
+
+    await saveData('imageUpload', formData)
       .then(response => {
         const urlArr = response.urls;
-        if(multiple){
-          setUrls((prevArr)=>[...prevArr , ...urlArr]);
-        }else{
+        if (multiple) {
+          setUrls((prevArr) => [...prevArr, ...urlArr]);
+        } else {
           setUrls(urlArr);
         }
 
@@ -51,15 +60,16 @@ function UploadImgs({ field, form, ...props }) {
   }
 
   useEffect(() => {
-    if(multiple){
+    console.log("url = ", urls)
+    if (multiple) {
       setFieldValue(field.name, urls)
-    }else{
+    } else {
       setFieldValue(field.name, urls[0])
     }
-    
-  }, [urls ,field.name,setFieldValue]);
 
-  const {getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({
+  }, [urls, field.name, setFieldValue]);
+
+  const { getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({
     accept: accept,
     multiple: multiple,
     onDrop: handleFileChange,
@@ -76,20 +86,25 @@ function UploadImgs({ field, form, ...props }) {
 
   return (
     <div>
-    <div {...getRootProps({onDragOver: (e) => {e.preventDefault()}})} className={`dropzone ${isDragActive ? "active" : ""} dragAndDrop m-2 `}>
-      <input {...getInputProps({multiple: multiple})}  accept={accept} onChange={handleFileChange}/>
-      <FaCloudDownloadAlt className="uploadIcon"/><br/>
-      <p >Drag and drop files here or click to select files.</p>
-    </div>
-    <div className="row">
-        {urls?.map((file, index) => (
-          <div className='col-2 mt-3' key={index}>
-            <div className="m-3">
-            <img style={{ height: '100px', width: '100px' }} src={file} alt='images' />
-            <span className='removeImg' type='button' onClick={(e) => {e.preventDefault(); handleRemoveFile(index)}}><FaTrashAlt /></span>
+      <div {...getRootProps({ onDragOver: (e) => { e.preventDefault() } })} className={`dropzone ${isDragActive ? "active" : ""} dragAndDrop m-2 `}>
+        <input {...getInputProps({ multiple: multiple })} accept={accept} onChange={handleFileChange} />
+        <FaCloudDownloadAlt className="uploadIcon" /><br />
+        <p >Drag and drop files here or click to select files.</p>
+      </div>
+      <div className="row">
+        {console.log("url = ", urls)}
+        {urls?.map((file, index) => {
+          console.log("file ==== ", file)
+
+          if (file) {
+            return <div className='col-2 mt-3' key={index}>
+              <div className="m-3">
+                <img style={{ height: '100px', width: '100px' }} src={file} alt='images' />
+                <span className='removeImg' type='button' onClick={(e) => { e.preventDefault(); handleRemoveFile(index) }}><FaTrashAlt /></span>
+              </div>
             </div>
-          </div>
-        ))} 
+          }
+        })}
       </div>
     </div>
   );

@@ -83,10 +83,6 @@ const ViewOrders = () => {
                     </Formik>
 
                 </div>
-                <div className="col-5 "></div>
-                <div className="col-5 ">
-                    UserId
-                </div>
             </div>
             <div className='mt-3 mb-3 ml-3 pl-1' >Total Orders  = {orderscount}</div>
             <div className='d-flex justify-content-around align-items-center'>

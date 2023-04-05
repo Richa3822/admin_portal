@@ -42,7 +42,7 @@ const ViewOrders = () => {
         let response = await FetchOrders(url, { params: { status: filter, limit: limit, offset: offset } })
         let orders = response.data.details;
         setData(orders)
-        setOrdersCount(orders.length)
+        setOrdersCount(response.data.count);
         return response
     }
     async function handlePage(event) {
@@ -50,6 +50,7 @@ const ViewOrders = () => {
         setFilter(filter)
         let newdata = await fetchData(ORDER_URL, LIMIT, newOffSet);
         setData(newdata.data.details);
+        setOrdersCount(newdata.data.count);
 
     }
 
@@ -82,10 +83,14 @@ const ViewOrders = () => {
                     </Formik>
 
                 </div>
+                <div className="col-5 "></div>
+                <div className="col-5 ">
+                    UserId
+                </div>
             </div>
             <div className='mt-3 mb-3 ml-3 pl-1' >Total Orders  = {orderscount}</div>
             <div className='d-flex justify-content-around align-items-center'>
-                <OrderTable data={data} changeData={(value) => setData(value)} />
+                <OrderTable data={data} filter={filter} changeData={(value) => setData(value)} changeCount = {((count)=>{setOrdersCount(count)})} />
             </div>
             <Pagination totalCount={100} currentPage={0} handlePageClick={(e) => handlePage(e)} />
         </div>

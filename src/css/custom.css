@@ -172,6 +172,21 @@ tr th {
     width: 300px !important;
     margin: 10px;   
 }
+
+/*Update Order Form*/
+.update-order{
+    border:0.5px solid var(--br-color-grey);
+    /* padding: 10px; */
+    border-radius: 5px;
+}
+.update-order-button{
+    color:black;
+}
+.update-order-button:hover{
+    color:black;
+}
+
+
 /* reset password page*/
 .reset-form {
     width: 600px;

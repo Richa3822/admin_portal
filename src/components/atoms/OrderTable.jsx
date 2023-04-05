@@ -1,83 +1,113 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'reactstrap';
 import Button, { ButtonType } from './Button';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import DeleteConfirmation from '../molecules/DeleteConfirmation';
+import Loader from '../atoms/Loader'
+import { LIMIT, ORDER_URL, UPDATE_ORDER_URL } from '../../constants/Constant';
+import { FetchOrders, UpdateOrders } from '../../services/Order';
+import moment from 'moment';
 
-function OrderTable({ data, setData }) {
+
+
+function OrderTable({ data, changeData }) {
+    let [_Id, set_Id] = useState("");
+    let [showLoader, setShowLoader] = useState(false);
+    let [showDeleteModal, setShowDeleteModal] = useState(false);
+    let navigate = useNavigate()
+
+    const toggle = () => {
+        setShowDeleteModal(!showDeleteModal);
+    }
+    const confirmDelete = async (confirm) => {
+        toggle();
+        if (confirm) {
+            await UpdateOrders(UPDATE_ORDER_URL, { _Id, status: "deleted" });
+            navigate('/view-orders')
+            const updatedResponse = await FetchOrders(ORDER_URL, { params: { limit: LIMIT } });
+            const orders = updatedResponse.data.details;
+            changeData(orders);
+        }
+
+    }
+
 
     return (
-        <Table hover>
-            <thead>
-                <tr>
-                    <th style={{ width: "5%" }}>#</th>
-                    <th style={{ width: "18%" }}>Order Id</th>
-                    <th style={{ width: "10%" }}>Total Products</th>
-                    <th style={{ width: "15%" }}>Order Date</th>
-                    <th style={{ width: "7%" }}>Status</th>
-                    <th style={{ width: "17%" }}>Customer Contact No.</th>
-                    <th style={{ width: "13%" }}>Total</th>
-                    <th style={{ width: "7%" }}>Payment</th>
-                </tr>
-            </thead>
+        <>
+            {
+                showLoader ? <Loader /> :
+                    <>
+                        <Table hover>
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "5%" }}>#</th>
+                                    <th style={{ width: "20%" }}>Order Id</th>
+                                    <th style={{ width: "10%" }}>Total Products</th>
+                                    <th style={{ width: "14%" }}>Order Date</th>
+                                    <th style={{ width: "14%" }}>Delivery Date</th>
+                                    <th style={{ width: "8%" }}>Status</th>
+                                    <th style={{ width: "10%" }}>Contact No.</th>
+                                    <th style={{ width: "10%" }}>Total</th>
+                                </tr>
+                            </thead>
 
-            <tbody>
-                {
-                    data?.map((order, index) => {
-                        const { oid, totalProducts, orderDate, total, status, payment, customerNo } = order;
+                            <tbody>
+                                {
 
-                        return (
-                            <tr key={oid} >
-                                <th scope="row">{index + 1}</th>
-                                <td className='ellipsis' ><span>{oid}</span></td>
-                                <td className='ellipsis' ><span>{totalProducts}</span></td>
-                                <td className='ellipsis' ><span>{orderDate}</span></td>
-                                <td className='ellipsis' ><span className={`badge badge-pill ${getColorByOrderStatus(status)}`} >{status}</span></td>
-                                <td className='ellipsis' ><span >{customerNo}</span></td>
-                                <td className='ellipsis' ><span>{total}</span></td>
-                                <td className='ellipsis' ><span className={`badge badge-pill ${getColorByPayment(payment)}`}>{payment}</span></td>
+                                    data?.map((order, index) => {
+                                        const { _Id, orderDate, deliveryDate, totalAmount, status, user: { contactNo } } = order;
+                                        const totalProducts = order.products.length;
+                                        return (
 
-                                <td className='d-flex justify-content-between border-0'>
-                                    <div>
-                                        <Button ButtonType={ButtonType.DELETE} />
-                                    </div>
-                                    <div>
-                                        <Button ButtonType={ButtonType.EDIT} />
-                                    </div>
-                                </td>
-                            </tr>
-                        )
-                    })
-                }
-            </tbody>
+                                            <tr key={_Id} >
 
-        </Table>
+                                                <th scope="row">{index + 1}</th>
+                                                <td className='ellipsis' ><span>{_Id}</span></td>
+                                                <td className='ellipsis' ><span>{totalProducts}</span></td>
+                                                <td className='ellipsis' ><span>{moment(orderDate).format("YYYY-MM-DD")}</span></td>
+                                                <td className='ellipsis' ><span>{moment(deliveryDate).format("YYYY-MM-DD")}</span></td>
+                                                <td className='ellipsis' ><span className={`badge badge-pill ${getColorByOrderStatus(status)}`} >{status}</span></td>
+                                                <td className='ellipsis' ><span >{contactNo}</span></td>
+                                                <td className='ellipsis' ><span>{totalAmount}</span></td>
+                                                <td className='d-flex justify-content-between'>
+
+                                                    <div onClick={() => {
+                                                        set_Id(_Id);
+                                                        toggle()
+                                                    }}>
+                                                        <Button ButtonType={ButtonType.DELETE} >
+                                                        </Button>
+                                                    </div>
+
+
+                                                    <div>
+                                                        <Link to={{ pathname: "/update-order", search: _Id }} className='update-order-button'>
+                                                            <Button ButtonType={ButtonType.EDIT}>
+                                                            </Button>
+                                                        </Link>
+
+                                                    </div>
+
+
+
+
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+
+                                }
+                            </tbody>
+
+
+                        </Table>
+
+                        <DeleteConfirmation open={showDeleteModal} confirmation={confirmDelete} toggle={toggle} title="Delete Confirmation" /></>
+            }
+
+        </>
     );
-}
-
-
-function getColorByPayment(payment) {
-    let color = 'badge-light'
-    switch (payment) {
-        case 'captured':
-            color = 'badge-success'
-            break;
-
-        case 'cancelled':
-            color = 'badge-danger'
-            break;
-
-        case 'pending':
-            color = 'badge-warning'
-            break;
-
-        case 'refunded':
-            color = 'badge-secondary'
-            break;
-
-        default:
-            color = 'badge-light'
-            break;
-    }
-    return color
 }
 
 function getColorByOrderStatus(status) {
@@ -103,9 +133,14 @@ function getColorByOrderStatus(status) {
             color = 'badge-secondary'
             break;
 
+        case 'deleted':
+            color = "badge-dark"
+            break;
+
         default:
             color = 'badge-light'
             break;
+
     }
     return color
 }

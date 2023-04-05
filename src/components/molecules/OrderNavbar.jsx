@@ -25,7 +25,7 @@ import {
               <NavLink href="" >Completed</NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="" color='light'>Cancled</NavLink>
+              <NavLink href="" color='light'>Cancelled</NavLink>
             </NavItem> 
           </Nav>
         </Collapse>

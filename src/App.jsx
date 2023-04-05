@@ -11,6 +11,8 @@ import ViewUsers from "./components/pages/ViewUsers";
 import ViewSellers from "./components/pages/ViewSellers";
 import ViewUserSellerDetails from "./components/pages/ViewUserSellerDetails";
 import AddUserSeller from "./components/pages/AddUserSeller";
+import UpdateOrder from "./components/pages/UpdateOrder";
+import React from 'react';
 import SetPassword from "./components/pages/SetPassword";
 import SetToken from './components/organisms/setToken';
 import ChangePassword from './components/pages/ChangePassword'
@@ -52,7 +54,7 @@ function App() {
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />
-
+              <Route path="/update-order" element={<UpdateOrder />}></Route>
               <Route path="/view-users" >
                 <Route path="" element={<ViewUsers />} />
                 <Route path=":id" element={<ViewUserSellerDetails />} />
@@ -71,7 +73,6 @@ function App() {
     </>
   );
 }
-
 
 
 export default App;

@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import DeleteConfirmation from '../molecules/DeleteConfirmation';
 import Loader from '../atoms/Loader'
-import { ORDER_URL, UPDATE_ORDER_URL } from '../../constants/Constant';
-import { FetchOrders, UpdateOrder } from '../../services/Order';
+import { LIMIT, ORDER_URL, UPDATE_ORDER_URL } from '../../constants/Constant';
+import { FetchOrders, UpdateOrders } from '../../services/Order';
+import moment from 'moment';
 
 
 
@@ -22,16 +23,11 @@ function OrderTable({ data, changeData }) {
     const confirmDelete = async (confirm) => {
         toggle();
         if (confirm) {
-            await UpdateOrder(UPDATE_ORDER_URL, { _Id, status: "deleted" });
+            await UpdateOrders(UPDATE_ORDER_URL, { _Id, status: "deleted" });
             navigate('/view-orders')
-            const updatedResponse = await FetchOrders(ORDER_URL,{params:{limit:10}});
+            const updatedResponse = await FetchOrders(ORDER_URL, { params: { limit: LIMIT } });
             const orders = updatedResponse.data.details;
-            const notDeletedOrders = orders.filter((order)=>{
-                if(order.status !=='deleted'){
-                    return order
-                }
-            })
-            changeData(notDeletedOrders);
+            changeData(orders);
         }
 
     }
@@ -69,8 +65,8 @@ function OrderTable({ data, changeData }) {
                                                 <th scope="row">{index + 1}</th>
                                                 <td className='ellipsis' ><span>{_Id}</span></td>
                                                 <td className='ellipsis' ><span>{totalProducts}</span></td>
-                                                <td className='ellipsis' ><span>{orderDate}</span></td>
-                                                <td className='ellipsis' ><span>{deliveryDate}</span></td>
+                                                <td className='ellipsis' ><span>{moment(orderDate).format("YYYY-MM-DD")}</span></td>
+                                                <td className='ellipsis' ><span>{moment(deliveryDate).format("YYYY-MM-DD")}</span></td>
                                                 <td className='ellipsis' ><span className={`badge badge-pill ${getColorByOrderStatus(status)}`} >{status}</span></td>
                                                 <td className='ellipsis' ><span >{contactNo}</span></td>
                                                 <td className='ellipsis' ><span>{totalAmount}</span></td>

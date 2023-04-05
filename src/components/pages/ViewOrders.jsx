@@ -4,11 +4,11 @@ import InputSelector from '../molecules/InputSelector'
 import Pagination from "../molecules/Pagination";
 import { Formik } from 'formik'
 import Card from "../atoms/Card"
-import {FetchOrders}from "../../services/Order"
-import { ORDER_URL } from '../../constants/Constant';
+import { FetchOrders } from "../../services/Order"
+import { LIMIT, ORDER_URL } from '../../constants/Constant';
 
 const ViewOrders = () => {
-  
+
     const [data, setData] = useState([])
     const [orderscount, setOrdersCount] = useState(0);
     const [initialValues, setInitialValues] = useState({
@@ -25,36 +25,37 @@ const ViewOrders = () => {
         { value: "deleted", label: "Deleted" }
     ];
     useEffect(() => {
-        fetchData(ORDER_URL,10)
+        fetchData(ORDER_URL)
     }, [filter]);
 
 
-    async function fetchData(url,limit) {
+    async function fetchData(url, limit = 10, offset = 0) {
         if (filter === "deleted") {
-            let response =await FetchOrders(url,{ params: { limit: limit, status: filter } })
+            let response = await FetchOrders(url, { params: { limit: limit, offset: offset, status: filter } })
             setData(response.data.details);
             setOrdersCount(response.data.count);
-            return;
+            return response;
         }
         if (filter === "all") {
             setFilter(null);
         }
-        else{
-        let response =await FetchOrders(url, { params: { limit: limit, status: filter } })
+        let response = await FetchOrders(url, { params: { status: filter, limit: limit, offset: offset } })
         let orders = response.data.details;
-        let notDeletedOrders = orders.filter((order) => {
-            if (order.status !== 'deleted') {
-                return order;
-            }
-        })
-        setData(notDeletedOrders);
-        setOrdersCount(notDeletedOrders.length);
-        }
+        setData(orders)
+        setOrdersCount(orders.length)
+        return response
+    }
+    async function handlePage(event) {
+        const newOffSet = event.selected * LIMIT;
+        setFilter(filter)
+        let newdata = await fetchData(ORDER_URL, LIMIT, newOffSet);
+        setData(newdata.data.details);
+
     }
 
     return (
         <div className='mt-2 rounded border'>
-           <Card heading="Update Order"/>
+            <Card heading="Update Order" />
             <div className='row ml-1'>
                 <div className='col-2'>
                     <Formik initialValues={initialValues}>
@@ -84,11 +85,17 @@ const ViewOrders = () => {
             </div>
             <div className='mt-3 mb-3 ml-3 pl-1' >Total Orders  = {orderscount}</div>
             <div className='d-flex justify-content-around align-items-center'>
-                <OrderTable data={data} changeData= {(value)=>setData(value)} />
+                <OrderTable data={data} changeData={(value) => setData(value)} />
             </div>
-            <Pagination totalCount={100} limit={10} />
+            <Pagination totalCount={100} currentPage={0} handlePageClick={(e) => handlePage(e)} />
         </div>
     )
+
+
+
+
 }
 
-export default ViewOrders
+
+
+export default ViewOrders;

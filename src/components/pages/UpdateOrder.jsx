@@ -6,8 +6,10 @@ import InputSelector from "../molecules/InputSelector";
 import Card from "../atoms/Card";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import axios from "axios";
 import Loader from "../atoms/Loader";
+import { UPDATE_ORDER_URL, ORDER_BY_ID_URL } from "../../constants/Constant";
+import { FetchOrders, UpdateOrders } from "../../services/Order";
+import moment from "moment";
 
 function UpdateOrder() {
   const location = useLocation();
@@ -47,16 +49,15 @@ function UpdateOrder() {
   const handleSubmit = async (values) => {
     values = { ...values }
     setShowLoader(true)
-    const updatedOrder = await axios.patch("http://localhost:4000/api/order", values, { headers: { Accept: "application/json", 'Content-Type': "application/json" } });
+    const updatedOrder = await UpdateOrders(UPDATE_ORDER_URL, values, { headers: { Accept: "application/json", 'Content-Type': "application/json" } });
     setShowLoader(false)
     navigate('/view-orders')
   }
 
   async function fetchData(orderId) {
-    resp = await axios.get("http://localhost:4000/api/order/admin", {
-      params: {
-        _Id: orderId,
-      }
+    console.log(orderId);
+    resp = await FetchOrders(`${ORDER_BY_ID_URL}/${orderId}`, {
+
     }, { headers: { Accept: "application/json", 'Content-Type': "application/json" } });
     setInitialValues(resp.data.details[0])
     setShowLoader(false);
@@ -127,7 +128,7 @@ function UpdateOrder() {
                           defaultValue={{ value: values.status, label: `${values.status.charAt(0).toUpperCase() + values.status.slice(1)}` }}
                         />
                       </div>
-                      
+
                       <div className="col-6">
                         <InputBox
                           label="Order Date"
@@ -137,7 +138,7 @@ function UpdateOrder() {
                           id="orderDate"
                           inputClass="form-control"
                           type="date"
-                          value={values.orderDate}
+                          value={moment(values.orderDate).format("YYYY-MM-DD")}
                         />
                       </div>
                     </div>
@@ -152,7 +153,7 @@ function UpdateOrder() {
                           id="deliveryDate"
                           inputClass="form-control"
                           type="date"
-                          value={values.deliveryDate}
+                          value={moment(values.deliveryDate).format("YYYY-MM-DD")}
                         />
                       </div>
                       <div className="col-3"></div>

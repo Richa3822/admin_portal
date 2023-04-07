@@ -11,8 +11,9 @@ import moment from 'moment';
 
 
 
-function OrderTable({ data, changeData,filter ,changeCount}) {
+function OrderTable({ data, changeData,filter ,changeCount,search}) {
     let [_Id, set_Id] = useState("");
+    console.log(search)
     let [showLoader, setShowLoader] = useState(false);
     let [showDeleteModal, setShowDeleteModal] = useState(false);
     let navigate = useNavigate()
@@ -25,7 +26,7 @@ function OrderTable({ data, changeData,filter ,changeCount}) {
         if (confirm) {
             await UpdateOrders(UPDATE_ORDER_URL, { _Id, status: "deleted" });
             navigate('/view-orders')
-            const updatedResponse = await FetchOrders(ORDER_URL, { params: { limit: LIMIT } });
+            const updatedResponse = await FetchOrders(ORDER_URL, { params: { limit: LIMIT ,search} });
             const orders = updatedResponse.data.details;
             changeData(orders);
             changeCount(updatedResponse.data.count);

@@ -67,7 +67,7 @@ const AddProductForm = () => {
     const isEditProductMode = isMongoId(productId);
 
 
-    // http://localhost:4000/api/product/640f201af24ae119f50a86fe
+    // ${API_BASE_URL}product/640f201af24ae119f50a86fe
     // console.log(" pid = ", productId, " = ", checkForHexRegExp.test(productId))
 
     const [initialValues, setInitialValues] = useState({

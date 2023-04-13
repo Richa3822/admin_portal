@@ -18,10 +18,13 @@ import SetToken from './components/organisms/setToken';
 import ChangePassword from './components/pages/ChangePassword'
 import ProfileFlyOut from "./components/organisms/ProfileFlyOut";
 import ForgottenPassword from "./components/pages/ForgottenPassword";
+import AddOffers from "./components/pages/AddOffers";
+import { API_BASE_URL } from "./config";
 
+console.log(API_BASE_URL)
 
 export const axiosObject = axios.create({
-  baseURL: 'http://localhost:4001/api/',
+  baseURL: API_BASE_URL,
   headers: {
     "Access-Control-Allow-Origin": "*"
   }
@@ -50,7 +53,7 @@ function App() {
               <Route path=":id" element={<AddProduct />} />
             </Route>
             <Route path="/view-orders" element={<ViewOrders />} />
-            {/* <Route path="/add-offers" element={<AddOffers />} /> */}
+            <Route path="/add-offers" element={<AddOffers />} />
 
             <Route element={<PrivateRoutes roleRequired="admin" />}>
               <Route path="/add-user-seller" element={<AddUserSeller />} />

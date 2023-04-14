@@ -1,6 +1,4 @@
 import React, { useState,useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import Logout from '../../services/Logout';
 
 import {
   Collapse,
@@ -16,19 +14,10 @@ import ImgTag from '../atoms/ImgTag';
 import Login from '../organisms/Login';
 
 const Topbar = ({setShowProfile}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);;
 
   const toggle = () => setIsOpen(!isOpen);
   let user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
-
-function set(){
-  setRedirectToLogin(true)
-}
-
-  if (redirectToLogin) {
-    return <Navigate to="/login" />;
-  }
 
 
   return (
@@ -43,7 +32,7 @@ function set(){
           </Nav>
           <NavbarText color='light'>{user.firstName}</NavbarText>
           <div style={{marginLeft:'1rem'}}>
-          <NavbarText color='light' onClick={()=>{Logout();set()}}>Log out</NavbarText>
+          {/* <NavbarText color='light' onClick={()=>{Logout();set()}}>Log out</NavbarText> */}
           </div>
           <ImgTag className='profil-img' imgUrl='/assets/images/avtar.png' altText={'user profile'} onclick={setShowProfile}/>
           {/* <NavbarText color='light'>{user.firstName}</NavbarText> */}

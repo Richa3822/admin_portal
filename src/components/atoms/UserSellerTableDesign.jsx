@@ -4,7 +4,7 @@ import { Table } from 'reactstrap';
 import DeleteConfirmation from '../molecules/DeleteConfirmation';
 import Button, { ButtonType } from './Button';
 
-const UserSellerTableDesign = ({ data, setData }) => {
+const UserSellerTableDesign = ({ data, setData, page, parentLink }) => {
     const [open, setOpen] = useState(false);
     const [deleteDataId, setDeleteDataId] = useState(null);
 
@@ -40,13 +40,13 @@ const UserSellerTableDesign = ({ data, setData }) => {
                 <tbody>
                     {
                         data?.map((person, index) => {
-                            const { firstName, lastName, contactNumber, email } = person;
+                            const { firstName, lastName, contactNumber, emailId } = person;
 
                             return (
                                 <tr key={person._id} >
                                     <th scope="row">
                                         <span>
-                                            {index + 1}
+                                            {(page * 10) + index + 1}
                                         </span>
                                     </th>
 
@@ -62,7 +62,7 @@ const UserSellerTableDesign = ({ data, setData }) => {
                                     </td>
                                     <td className='ellipsis' scope="row">
                                         <span>
-                                            {email}
+                                            {emailId}
                                         </span>
                                     </td>
 
@@ -74,7 +74,7 @@ const UserSellerTableDesign = ({ data, setData }) => {
                                             <Button ButtonType={ButtonType.DELETE} />
                                         </div>
                                         <div>
-                                            <Link to={`/view-user/${person['_id']}`} state={{ person }} >
+                                            <Link to={`${parentLink + "/" + person['_id']}`} state={{ person }} >
                                                 <Button ButtonType={ButtonType.EDIT} />
                                             </Link>
                                         </div>

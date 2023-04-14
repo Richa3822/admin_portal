@@ -2,7 +2,7 @@ import InputLabel from "../atoms/InputLabel"
 import InputField from "../atoms/InputField"
 import CustomErrorMsg from "../atoms/CustomErrorMsg"
 const InputBox = (props) => {
-const { label,forHtml, type, placeholder, id, name, inputClass, disabled = false } = props
+const { label,forHtml, type, placeholder, id,value, name, inputClass, disabled = false } = props
     return (
         <div className="form-group">
             <InputLabel htmlFor={forHtml} label={label} />
@@ -12,6 +12,8 @@ const { label,forHtml, type, placeholder, id, name, inputClass, disabled = false
                 name={name}
                 inputClass={inputClass}
                 disabled={disabled}
+                value = {value}
+
             />
             <CustomErrorMsg name={name} />
         </div>

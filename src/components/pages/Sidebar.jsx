@@ -1,14 +1,18 @@
 
+import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import List from '../atoms/List';
 import Topbar from '../molecules/Topbar';
+import ProfileFlyOut from '../organisms/ProfileFlyOut'
 
 const Sidebar = () => {
     const user = JSON.parse(localStorage.getItem("userData"))
-
+    const [showProfile, setShowProfile]= useState(false);
     return (
         <>
-            <Topbar />
+            <Topbar  setShowProfile={()=>setShowProfile(!showProfile)}/>
+            {showProfile?  <ProfileFlyOut /> : null }
+           
             <div className='d-flex justify-content-between align-items-center'>
                 <div className="bg-dark sidebar-left" id="sidebar-left"  >
                     <Link to='/'><List name='Dashboard' /></Link>
@@ -22,6 +26,7 @@ const Sidebar = () => {
                     <Link to='/add-product'><List name='Add Products' /></Link>
                     <Link to='/view-products'><List name='View Products' /></Link>
                     <Link to='/view-orders'><List name='View Orders' /></Link>
+                    <Link to='/add-offers'><List name='Add offers'/></Link>
 
                     {
                         user.role === "admin"

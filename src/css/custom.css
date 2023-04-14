@@ -172,6 +172,21 @@ tr th {
     width: 300px !important;
     margin: 10px;   
 }
+
+/*Update Order Form*/
+.update-order{
+    border:0.5px solid var(--br-color-grey);
+    /* padding: 10px; */
+    border-radius: 5px;
+}
+.update-order-button{
+    color:black;
+}
+.update-order-button:hover{
+    color:black;
+}
+
+
 /* reset password page*/
 .reset-form {
     width: 600px;
@@ -205,4 +220,27 @@ tr th {
   .reset-pwd-button:hover {
     background: #17c;
     outline: none;
+  }
+
+  .generate-btn{
+    height: 2.3rem;
+    margin-top: 1.9rem;
+  }
+
+  .profil-img{
+    height: 4rem;
+    width:4rem;
+    border-radius: 50%;
+  }
+  .profile-fly-out{
+    width: 20rem;
+    border: 2px solid rgb(202, 199, 199);
+    background-color: white;
+    position: absolute;
+    z-index: 1;
+    top:4.7rem;
+    right: 1rem;
+  }
+  .profile-option{
+    font-size: 1.3rem;
   }

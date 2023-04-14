@@ -1,7 +1,7 @@
 import { Field } from 'formik'
 import React from 'react'
 const InputField = (props) => {
-    const { name, type, placeholder, id, inputClass, disabled} = props
+    const { name, type, placeholder,value, id, inputClass, disabled} = props
     return (
         <>
             < Field
@@ -11,6 +11,7 @@ const InputField = (props) => {
                 id={id}
                 className={inputClass}
                 disabled={disabled}
+                value = {value}
             />
         </>
     )

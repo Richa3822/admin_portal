@@ -8,7 +8,7 @@ const {className , name} = props;
     <ErrorMessage name={name}>
         {
             (errorMsg)=>{
-                return (<div className={className?className:'text-danger mt-1'}>{name} {errorMsg}</div>)
+                return (<div className={className?className:'text-danger mt-1'}>{errorMsg}</div>)
             }
         }
     </ErrorMessage>

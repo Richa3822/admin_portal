@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Spinner, Table } from 'reactstrap';
+import { LIMIT } from '../../constants/Constant';
 import { deleteData } from '../../services/Api';
 import DeleteConfirmation from '../molecules/DeleteConfirmation';
 import Button, { ButtonType } from './Button';
 
-const TableDesign = ({ data, setData, setDeletedId }) => {
+const TableDesign = ({ data, page = 1, setDeletedId }) => {
     const [open, setOpen] = useState(false);
     const [deleteProductInfo, setDeleteProductInfo] = useState({ productId: "", variantId: "" });
 
@@ -25,11 +27,7 @@ const TableDesign = ({ data, setData, setDeletedId }) => {
                 const { status, message } = deletedProduct;
 
                 if (status) {
-                    // setData(prevData => prevData.filter(data => {
-                    //     return data.variant._id !== deleteProductInfo.variantId
-                    // }))
                     setDeletedId(deleteProductInfo?.variantId)
-                    alert(` ${message}`);
                 }
                 else {
                     alert(`error: ${message}, please try again`);
@@ -63,7 +61,7 @@ const TableDesign = ({ data, setData, setDeletedId }) => {
 
                             return (
                                 <tr key={product._id + index} >
-                                    <th scope="row">{index + 1}</th>
+                                    <th scope="row">{(page * LIMIT) + index + 1}</th>
                                     <td className='ellipsis' ><span>{name}</span></td>
                                     <td className='ellipsis' ><span>{brand}</span></td>
                                     <td className='ellipsis' ><span>{price}</span></td>
@@ -82,7 +80,9 @@ const TableDesign = ({ data, setData, setDeletedId }) => {
                                             <Button ButtonType={ButtonType.DELETE} />
                                         </div>
                                         <div>
-                                            <Button ButtonType={ButtonType.EDIT} />
+                                            <Link to={`/view-products/${product._id}`} >
+                                                <Button ButtonType={ButtonType.EDIT} />
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>
@@ -92,9 +92,9 @@ const TableDesign = ({ data, setData, setDeletedId }) => {
                 </tbody>
 
             </Table>
-            
 
-            <DeleteConfirmation open={open} confirmation={confirmation} toggle={toggle} />
+
+            <DeleteConfirmation open={open} confirmation={confirmation} toggle={toggle} title="Delete Product"/>
 
         </>
     );

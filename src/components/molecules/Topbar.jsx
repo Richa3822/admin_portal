@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+
 import {
   Collapse,
   Navbar,
@@ -10,11 +11,14 @@ import {
   NavbarText
 } from 'reactstrap';
 import ImgTag from '../atoms/ImgTag';
+import Login from '../organisms/Login';
 
 const Topbar = ({setShowProfile}) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);;
+
   const toggle = () => setIsOpen(!isOpen);
   let user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : {};
+
 
   return (
     <div>
@@ -26,10 +30,13 @@ const Topbar = ({setShowProfile}) => {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
           </Nav>
+          <NavbarText color='light'>{user.firstName}</NavbarText>
+          <div style={{marginLeft:'1rem'}}>
+          {/* <NavbarText color='light' onClick={()=>{Logout();set()}}>Log out</NavbarText> */}
+          </div>
           <ImgTag className='profil-img' imgUrl='/assets/images/avtar.png' altText={'user profile'} onclick={setShowProfile}/>
           {/* <NavbarText color='light'>{user.firstName}</NavbarText> */}
         </Collapse>
-
       </Navbar>
     </div>
   );

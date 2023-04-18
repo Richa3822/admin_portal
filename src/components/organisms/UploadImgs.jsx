@@ -13,7 +13,6 @@ UploadImgs.defaultProps = {
 
 function UploadImgs({ field, form, ...props }) {
   const { multiple, maxFiles, accept } = props;
-  console.log("field = ", field.name, ", form value = ", form.values, " m = ", multiple)
   const { setFieldValue } = form;
   const [isDragActive, setIsDragActive] = useState(false);
 
@@ -25,7 +24,6 @@ function UploadImgs({ field, form, ...props }) {
       [getValueFromObjectByKey(form.values, field.name, '')]
   );
 
-
   const onDragEnter = useCallback(() => {
     setIsDragActive(true);
   }, []);
@@ -35,7 +33,8 @@ function UploadImgs({ field, form, ...props }) {
   }, []);
 
 
-  const handleFileChange = async (files) => {
+  const handleFileChange = useCallback(async (files) => {
+    console.log("filessssssssssssssssssssssssssss",files);
     if (maxFiles && files.length > maxFiles) {
       alert(`You can select a maximum of ${maxFiles} files.`);
       return;
@@ -45,6 +44,7 @@ function UploadImgs({ field, form, ...props }) {
       formData.append('images', files[i]);
     }
 
+    console.log("formdataaaaaaaaaaaaaaaaaaaaaaaa",formData.get(['images']));
     await saveData('imageUpload', formData)
       .then(response => {
         const urlArr = response.urls;
@@ -57,17 +57,16 @@ function UploadImgs({ field, form, ...props }) {
       }).catch(err => {
         console.log(err)
       })
-  }
+  }, [maxFiles, multiple, setUrls]);
 
   useEffect(() => {
-    console.log("url = ", urls)
     if (multiple) {
       setFieldValue(field.name, urls)
     } else {
       setFieldValue(field.name, urls[0])
     }
 
-  }, [urls, field.name, setFieldValue]);
+  }, [urls, field.name, setFieldValue, multiple]);
 
   const { getRootProps, getInputProps, isDragActive: dropzoneIsDragActive } = useDropzone({
     accept: accept,
@@ -87,15 +86,12 @@ function UploadImgs({ field, form, ...props }) {
   return (
     <div>
       <div {...getRootProps({ onDragOver: (e) => { e.preventDefault() } })} className={`dropzone ${isDragActive ? "active" : ""} dragAndDrop m-2 `}>
-        <input {...getInputProps({ multiple: multiple })} accept={accept} onChange={handleFileChange} />
+        <input {...getInputProps({ multiple: multiple })} accept={accept} />
         <FaCloudDownloadAlt className="uploadIcon" /><br />
         <p >Drag and drop files here or click to select files.</p>
       </div>
       <div className="row">
-        {console.log("url = ", urls)}
         {urls?.map((file, index) => {
-          console.log("file ==== ", file)
-
           if (file) {
             return <div className='col-2 mt-3' key={index}>
               <div className="m-3">

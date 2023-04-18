@@ -111,7 +111,7 @@ const AddProductForm = () => {
         if (selectedCategory !== '') {
             getData(`category/${selectedCategory}`).then(result => {
                 let data = result.subCategoryNames
-                const newSubCategory = data.map((e, i) => ({
+                const newSubCategory = data?.map((e, i) => ({
                     value: e.name,
                     label: e.name,
                 }))
@@ -128,7 +128,7 @@ const AddProductForm = () => {
         if (selectedSubCategory !== '') {
             getData(`category/${selectedSubCategory}`).then(result => {
                 let data = result.subCategoryNames
-                const newCategory = data.map((e, i) => ({
+                const newCategory = data?.map((e, i) => ({
                     value: e.name,
                     label: e.name,
                     category: e.category

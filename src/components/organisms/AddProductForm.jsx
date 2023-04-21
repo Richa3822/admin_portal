@@ -67,7 +67,7 @@ const AddProductForm = () => {
     const isEditProductMode = isMongoId(productId);
 
 
-    // http://localhost:4000/api/product/640f201af24ae119f50a86fe
+    // ${API_BASE_URL}product/640f201af24ae119f50a86fe
     // console.log(" pid = ", productId, " = ", checkForHexRegExp.test(productId))
 
     const [initialValues, setInitialValues] = useState({
@@ -111,7 +111,7 @@ const AddProductForm = () => {
         if (selectedCategory !== '') {
             getData(`category/${selectedCategory}`).then(result => {
                 let data = result.subCategoryNames
-                const newSubCategory = data.map((e, i) => ({
+                const newSubCategory = data?.map((e, i) => ({
                     value: e.name,
                     label: e.name,
                 }))
@@ -128,7 +128,7 @@ const AddProductForm = () => {
         if (selectedSubCategory !== '') {
             getData(`category/${selectedSubCategory}`).then(result => {
                 let data = result.subCategoryNames
-                const newCategory = data.map((e, i) => ({
+                const newCategory = data?.map((e, i) => ({
                     value: e.name,
                     label: e.name,
                     category: e.category

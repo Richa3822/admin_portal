@@ -93,7 +93,7 @@ const ViewOrders = () => {
             <div className='d-flex justify-content-around align-items-center'>
                 <OrderTable data={data} filter={filter} changeData={(value) => setData(value)} changeCount = {((count)=>{setOrdersCount(count)})}  search={search} />
             </div>
-            <Pagination totalCount={100} currentPage={0} handlePageClick={(e) => handlePage(e)} />
+            <Pagination totalCount={orderscount} currentPage={0} handlePageClick={(e) => handlePage(e)} />
         </div>
     )
 
